@@ -397,7 +397,7 @@ def _bragg_r1r2_kappa1d_kapp2d(lambdaH, scriptG, chi0, b, alpha, gamma0, klen, d
     reflectivity
 
     Notice that, for numerical stability, we are here forcing
-    the imaginary part of kappa1 * d to be positive so that the
+    the imaginary part of kappa1 * thickness to be positive so that the
     phase term in the exponential does not explode
 
     :param lambdaH:
@@ -413,7 +413,7 @@ def _bragg_r1r2_kappa1d_kapp2d(lambdaH, scriptG, chi0, b, alpha, gamma0, klen, d
     y = klen * lambdaH / 2 / gamma0
     y *= (b * alpha + chi0 * (1 - b))
 
-    # Get kappa1 * d and kappa2 * d
+    # Get kappa1 * thickness and kappa2 * thickness
     kappa1d = chi0 * klen * d / 2 / gamma0
     kappa1d += d / lambdaH * (-y + np.sqrt(y ** 2 + b / np.abs(b)))
 
@@ -424,7 +424,7 @@ def _bragg_r1r2_kappa1d_kapp2d(lambdaH, scriptG, chi0, b, alpha, gamma0, klen, d
     r1, r2 = (scriptG * (-y + np.sqrt(y ** 2 + b / np.abs(b))),
               scriptG * (-y - np.sqrt(y ** 2 + b / np.abs(b))),)
 
-    # Get the positiveness of the imaginary part of kappa1 * d
+    # Get the positiveness of the imaginary part of kappa1 * thickness
     mask = np.zeros_like(kappa1d, dtype=bool)
     mask[kappa1d.imag < 0] = True
 

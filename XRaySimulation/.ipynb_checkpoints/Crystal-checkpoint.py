@@ -87,11 +87,11 @@ class ChannelCut:
         wave_length = 2 * np.pi / util.kev_to_wavevec_length(energy=energy_keV)
 
         # Get geometric bragg angle
-        bragg_theta = util.get_bragg_angle(wave_length=wave_length, plane_distance=crystal_property['d'])
+        bragg_theta = util.get_bragg_angle(wave_length=wave_length, plane_distance=crystal_property['thickness'])
 
         # Create 2 crystals
         self.crystal_list = [
-            CrystalBlock3D(h=np.array([0., 2. * np.pi / crystal_property['d'], 0.]),
+            CrystalBlock3D(h=np.array([0., 2. * np.pi / crystal_property['thickness'], 0.]),
                            normal=np.array([0., -np.cos(asymmetry_angle_list[x]), np.sin(asymmetry_angle_list[x])]),
                            surface_point=np.zeros(3, dtype=np.float64),
                            thickness=thickness_list[x],
@@ -365,7 +365,7 @@ class CrystalBlock3D_auto:
                 crystal_property = pickle.load(handle)
 
         # Reciprocal lattice in um^-1
-        self.h = np.copy(np.array([0., 2. * np.pi / crystal_property['d'], 0.]))
+        self.h = np.copy(np.array([0., 2. * np.pi / crystal_property['thickness'], 0.]))
         self.normal = np.array([0., -np.cos(asymmetry_angle), np.sin(asymmetry_angle)])
         self.surface_point = np.zeros(3, dtype=np.float64)
         self.thickness = thickness
@@ -910,7 +910,7 @@ def get_crystal_param(crystal_type, miller_index, energy_kev):
                     pass
 
             elif words[0] == 'Interplanar':
-                info_holder.update({"d": float(words[-1]) * 1e-4})
+                info_holder.update({"thickness": float(words[-1]) * 1e-4})
 
             else:
                 pass

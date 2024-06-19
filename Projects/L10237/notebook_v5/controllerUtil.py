@@ -15,7 +15,7 @@ from XRaySimulation import DeviceSimu, util
 This file contains functions that are used to be defined in the controller class.
 I split it because it was too long.
 """
-si220 = {'d': 1.9201 * 1e-4,
+si220 = {'thickness': 1.9201 * 1e-4,
          "chi0": complex(-0.10169E-04, 0.16106E-06),
          "chih_sigma": complex(0.61786E-05, - 0.15508E-06),
          "chihbar_sigma": complex(0.61786E-05, -0.15508E-06),
@@ -23,7 +23,7 @@ si220 = {'d': 1.9201 * 1e-4,
          "chihbar_pi": complex(0.48374E-05, -0.11996E-06),
          }
 
-si111 = {'d': 3.1355 * 1e-4,
+si111 = {'thickness': 3.1355 * 1e-4,
          "chi0": complex(-0.10169E-04, 0.16106E-06),
          "chih_sigma": complex(0.53693E-05, -0.11228E-06),
          "chihbar_sigma": complex(0.53693E-05, -0.11228E-06),
@@ -31,7 +31,7 @@ si111 = {'d': 3.1355 * 1e-4,
          "chihbar_pi": complex(0.49322E-05, -0.10272E-06),
          }
 
-dia111 = {'d': 2.0593 * 1e-4,
+dia111 = {'thickness': 2.0593 * 1e-4,
           "chi0": complex(-0.15217E-04, 0.13392E-07),
           "chih_sigma": complex(0.55417E-05, -0.93083E-08),
           "chihbar_sigma": complex(0.55417E-05, -0.93083E-08),
@@ -952,7 +952,7 @@ def get_beam_profile_on_yag_sample(rot_mat, kin, beam_size):
 
 def align_xpp_mono(controller):
     # Get the geometry bragg angle
-    bragg = util.get_bragg_angle(wave_length=np.pi * 2 / controller.gaussian_pulse.klen0, plane_distance=dia111['d'])
+    bragg = util.get_bragg_angle(wave_length=np.pi * 2 / controller.gaussian_pulse.klen0, plane_distance=dia111['thickness'])
 
     # Step 1, move the mono1 th to the geometric path
     _ = controller.mono_t1.th_umv(target=-bragg)
@@ -1029,7 +1029,7 @@ def align_miniSD(controller):
     kout = kout[-1]
 
     # Get the geometry bragg angle
-    bragg = util.get_bragg_angle(wave_length=np.pi * 2 / controller.gaussian_pulse.klen0, plane_distance=si220['d'])
+    bragg = util.get_bragg_angle(wave_length=np.pi * 2 / controller.gaussian_pulse.klen0, plane_distance=si220['thickness'])
     bragg_list = [bragg, bragg, bragg, bragg, bragg, bragg]
 
     # Step 1, move the mono1 th to the geometric path

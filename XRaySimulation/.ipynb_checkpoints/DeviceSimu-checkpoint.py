@@ -1437,7 +1437,7 @@ def get_interpolated_eField(kvec_array, coor_dict, efield_array, k0, mode, coor_
 
         new_coor_dict = {'xCoor': xCoor, 'yCoor': yCoor, 'zCoor': zCoor, 'tCoor': tCoor,
                          'kxCoor': kxCoor, 'kyCoor': kyCoor, 'kzCoor': kzCoor,
-                         'ExCoor': ExCoor, 'EyCoor': EyCoor, 'EzCoor': EzCoor, }
+                         'ExCoor': ExCoor, 'EyCoor': EyCoor, 'kin_grid': EzCoor, }
 
         new_position_grid = np.zeros((nx, ny, nz, 3))
         new_position_grid[:, :, :, 0] = xCoor[:, np.newaxis, np.newaxis]

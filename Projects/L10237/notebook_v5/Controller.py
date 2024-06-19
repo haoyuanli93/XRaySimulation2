@@ -11,7 +11,7 @@ from XRaySimulation.Machine import Motors
 import MotorStack
 import controllerUtil
 
-si220 = {'d': 1.9201 * 1e-4,
+si220 = {'thickness': 1.9201 * 1e-4,
          "chi0": complex(-0.10169E-04, 0.16106E-06),
          "chih_sigma": complex(0.61786E-05, - 0.15508E-06),
          "chihbar_sigma": complex(0.61786E-05, -0.15508E-06),
@@ -19,7 +19,7 @@ si220 = {'d': 1.9201 * 1e-4,
          "chihbar_pi": complex(0.48374E-05, -0.11996E-06),
          }
 
-si111 = {'d': 3.1355 * 1e-4,
+si111 = {'thickness': 3.1355 * 1e-4,
          "chi0": complex(-0.10169E-04, 0.16106E-06),
          "chih_sigma": complex(0.53693E-05, -0.11228E-06),
          "chihbar_sigma": complex(0.53693E-05, -0.11228E-06),
@@ -27,7 +27,7 @@ si111 = {'d': 3.1355 * 1e-4,
          "chihbar_pi": complex(0.49322E-05, -0.10272E-06),
          }
 
-dia111 = {'d': 2.0593 * 1e-4,
+dia111 = {'thickness': 2.0593 * 1e-4,
           "chi0": complex(-0.15217E-04, 0.13392E-07),
           "chih_sigma": complex(0.55417E-05, -0.93083E-08),
           "chihbar_sigma": complex(0.55417E-05, -0.93083E-08),
@@ -286,7 +286,7 @@ def get_optics():
     #   Get crystal for XPP mono
     # ------------------------------------------
     mono_miscut = [np.deg2rad(0.0), np.deg2rad(0.0)]
-    mono_diamond = [Crystal.CrystalBlock3D(h=np.array([0., 2. * np.pi / dia111['d'], 0.]),
+    mono_diamond = [Crystal.CrystalBlock3D(h=np.array([0., 2. * np.pi / dia111['thickness'], 0.]),
                                            normal=np.array(
                                                [0., -np.cos(mono_miscut[x]), np.sin(mono_miscut[x])]),
                                            surface_point=np.zeros(3, dtype=np.float64),
@@ -346,7 +346,7 @@ def get_optics():
     cc_channel_cuts[1].shift(displacement=np.copy(vcc_channel_cuts[1].crystal_list[1].surface_point))
 
     # Get the silicon 111 for the TG probe
-    tg_si111 = Crystal.CrystalBlock3D(h=np.array([np.pi * 2 / si111['d'], 0, 0], dtype=np.float64),
+    tg_si111 = Crystal.CrystalBlock3D(h=np.array([np.pi * 2 / si111['thickness'], 0, 0], dtype=np.float64),
                                       normal=np.array([-1., 0, 0.]),
                                       surface_point=np.zeros(3),
                                       thickness=1e4,
@@ -474,7 +474,7 @@ def assemble_motors_and_optics():
 
 def install_xpp_mono(controller):
     # Insatll the XPP mono
-    bragg = util.get_bragg_angle(wave_length=controller.wavelength, plane_distance=dia111['d'])
+    bragg = util.get_bragg_angle(wave_length=controller.wavelength, plane_distance=dia111['thickness'])
     # Assume that the gap size is 50 cm, then the z offset is gap / np.tan(2 * bragg)
     gap = 500e3
     z_offset = gap / np.tan(2 * bragg)

@@ -9,7 +9,7 @@ import numpy as np
 
 from XRaySimulation import util
 
-si220 = {'d': 1.9201 * 1e-4,
+si220 = {'thickness': 1.9201 * 1e-4,
          "chi0": complex(-0.80575E-05, 0.10198E-06),
          "chih_sigma": complex(0.48909E-05, -0.98241E-07),
          "chihbar_sigma": complex(0.48909E-05, -0.98241E-07),
@@ -17,7 +17,7 @@ si220 = {'d': 1.9201 * 1e-4,
          "chihbar_pi": complex(0.40482E-05, -0.80452E-07),
          }
 
-dia111 = {'d': 2.0593 * 1e-4,
+dia111 = {'thickness': 2.0593 * 1e-4,
           "chi0": complex(-0.12067E-04, 0.82462E-08),
           "chih_sigma": complex(0.43910E-05, -0.57349E-08),
           "chihbar_sigma": complex(0.43910E-05, -0.57349E-08),
@@ -84,7 +84,7 @@ def get_raytracing_trajectory(controller,
 
 def align_xpp_mono(controller):
     # Get the geometry bragg angle
-    bragg = util.get_bragg_angle(wave_length=np.pi * 2 / controller.gaussian_pulse.klen0, plane_distance=dia111['d'])
+    bragg = util.get_bragg_angle(wave_length=np.pi * 2 / controller.gaussian_pulse.klen0, plane_distance=dia111['thickness'])
 
     # Align the first crystal
     (rot_mat1, fwhm1, kout1, angle_adjust1, angles1, reflectivity1
@@ -139,7 +139,7 @@ def align_miniSD_SASE(controller):
     kout = np.copy(kout[-1])
 
     # Get the geometry bragg angle
-    bragg = util.get_bragg_angle(wave_length=np.pi * 2 / controller.gaussian_pulse.klen0, plane_distance=si220['d'])
+    bragg = util.get_bragg_angle(wave_length=np.pi * 2 / controller.gaussian_pulse.klen0, plane_distance=si220['thickness'])
     print(bragg)
 
     # Step 1, move the mono1 th to the geometric Bragg angle
@@ -234,7 +234,7 @@ def get_miniSD_rocking(controller):
     kout = np.copy(kout[-1])
 
     # Get the geometry bragg angle
-    bragg = util.get_bragg_angle(wave_length=np.pi * 2 / controller.gaussian_pulse.klen0, plane_distance=si220['d'])
+    bragg = util.get_bragg_angle(wave_length=np.pi * 2 / controller.gaussian_pulse.klen0, plane_distance=si220['thickness'])
     print(bragg)
 
     # Step 1, move the mono1 th to the geometric Bragg angle
