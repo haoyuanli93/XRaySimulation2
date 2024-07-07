@@ -440,7 +440,7 @@ class RotationMotor:
         self.rotation_center = np.ascontiguousarray(rot_mat.dot(self.rotation_center))
         self.rotation_axis = np.ascontiguousarray(rot_mat.dot(self.rotation_axis))
 
-        self.default_rotation_axis= np.ascontiguousarray(rot_mat.dot(self.default_rotation_axis))
+        self.default_rotation_axis = np.ascontiguousarray(rot_mat.dot(self.default_rotation_axis))
         self.top_mount_dir = np.dot(rot_mat, self.top_mount_dir)
         self.top_mount_pos = np.dot(rot_mat, self.top_mount_pos)
         self.bottom_mount_dir = np.dot(rot_mat, self.bottom_mount_dir)
@@ -612,7 +612,7 @@ class SwivalMotor:
         self.rotation_center = np.ascontiguousarray(rot_mat.dot(self.rotation_center))
         self.rotation_axis = np.ascontiguousarray(rot_mat.dot(self.rotation_axis))
 
-        self.default_rotation_axis= np.ascontiguousarray(rot_mat.dot(self.default_rotation_axis))
+        self.default_rotation_axis = np.ascontiguousarray(rot_mat.dot(self.default_rotation_axis))
         self.top_mount_dir = np.dot(rot_mat, self.top_mount_dir)
         self.top_mount_pos = np.dot(rot_mat, self.top_mount_pos)
         self.bottom_mount_dir = np.dot(rot_mat, self.bottom_mount_dir)
@@ -1111,6 +1111,280 @@ def get_motors_with_model_for_axis(model, rot_center_height=70e3, color='k', axi
         motor_obj2 = SwivalMotor(upperLim=np.deg2rad(5),
                                  lowerLim=-np.deg2rad(5),
                                  res=np.deg2rad(0.002126),
+                                 backlash=np.deg2rad(0.01),
+                                 speed_rad_per_ps=np.deg2rad(0.4) / 1e12,
+                                 dimension=[50e3, 50e3],
+                                 rot_center_height=50,
+                                 height=18e3,
+                                 color=color)
+        rot_mat = np.array([[1, 0, 0],
+                            [0, 0, 1],
+                            [0, -1, 0]])
+        motor_obj2.rotate_wrt_point(rot_mat=rot_mat, ref_point=np.copy(motor_obj2.bottom_mount_pos))
+        motor_obj = install_motors_on_motor_or_adaptors(motor_tower=[motor_obj2, ],
+                                                        motor_or_adaptor=motor_obj1)
+        if axis == 'x':
+            print("Rotate motor to face x rotation_axis")
+            rot_mat = np.array([[0, -1, 0],
+                                [1, 0, 0],
+                                [0, 0, 1]])
+            motor_obj1.rotate_wrt_point(rot_mat=rot_mat,
+                                        ref_point=np.copy(motor_obj1.bottom_mount_pos))
+            motor_obj2.rotate_wrt_point(rot_mat=rot_mat,
+                                        ref_point=np.copy(motor_obj1.bottom_mount_pos))
+        elif axis == 'y':
+            pass
+        elif axis == "z":
+            print("Warning, cannot create {} along z rotation_axis automatically.".format(model))
+            print("Please create this motor manually.")
+
+    else:
+        print("Motor with model {} has not been defined in this simulator.".format(model))
+        motor_obj = 0
+
+    return motor_obj
+
+
+def get_ideal_motors_with_model_for_axis(model, rot_center_height=70e3, color='k', axis='x'):
+    if model == "XA10A":
+        print("Create a XA10A motor, moving along x rotation_axis.")
+        motor_obj = xyMotor(upperLim=12.5 * 1000,
+                            lowerLim=-12.5 * 1000,
+                            res=0.,
+                            backlash=100,
+                            speed_um_per_ps=1 * 1000 / 1e12,
+                            dimension=[100e3, 100e3],
+                            height=30e3,
+                            color=color)
+        if axis == 'x':
+            pass
+        elif axis == 'y':
+            rot_mat = np.array([[0, -1, 0],
+                                [1, 0, 0],
+                                [0, 0, 1]])
+            rot_mat = np.dot(rot_mat, np.array([[0, 0, 1],
+                                                [0, 1, 0],
+                                                [-1, 0, 0]]))
+            motor_obj.rotate_wrt_point(rot_mat=rot_mat,
+                                       ref_point=np.copy(motor_obj.bottom_mount_pos))
+
+        elif axis == "z":
+            rot_mat = np.array([[1, 0, 0],
+                                [0, 0, -1],
+                                [0, 1, 0]])
+            motor_obj.rotate_wrt_point(rot_mat=rot_mat,
+                                       ref_point=np.copy(motor_obj.bottom_mount_pos))
+            pass
+
+    elif model == "UTS100CC":
+        print("Create a {} motor, moving along x rotation_axis.".format(model))
+        motor_obj = xyMotor(upperLim=50 * 1000,
+                            lowerLim=-50 * 1000,
+                            res=0,
+                            backlash=100,
+                            speed_um_per_ps=2 * 1000 / 1e12,
+                            dimension=[100e3, 100e3],
+                            height=32e3,
+                            color=color)
+        if axis == 'x':
+            pass
+        elif axis == 'y':
+            rot_mat = np.array([[0, -1, 0],
+                                [1, 0, 0],
+                                [0, 0, 1]])
+            rot_mat = np.dot(rot_mat, np.array([[0, 0, 1],
+                                                [0, 1, 0],
+                                                [-1, 0, 0]]))
+            motor_obj.rotate_wrt_point(rot_mat=rot_mat,
+                                       ref_point=np.copy(motor_obj.bottom_mount_pos))
+
+        elif axis == "z":
+            rot_mat = np.array([[1, 0, 0],
+                                [0, 0, -1],
+                                [0, 1, 0]])
+            motor_obj.rotate_wrt_point(rot_mat=rot_mat,
+                                       ref_point=np.copy(motor_obj.bottom_mount_pos))
+
+    elif model == "XA10A-L101":
+        print("Create a XA10A motor, moving along x rotation_axis.")
+        motor_obj = xyMotor(upperLim=50 * 1000,
+                            lowerLim=-50 * 1000,
+                            res=0,
+                            backlash=100,
+                            speed_um_per_ps=1 * 1000 / 1e12,
+                            dimension=[190e3, 100e3],
+                            height=50e3,
+                            color=color)
+        if axis == 'x':
+            pass
+        elif axis == 'y':
+            rot_mat = np.array([[0, -1, 0],
+                                [1, 0, 0],
+                                [0, 0, 1]])
+            rot_mat = np.dot(rot_mat, np.array([[0, 0, 1],
+                                                [0, 1, 0],
+                                                [-1, 0, 0]]))
+            motor_obj.rotate_wrt_point(rot_mat=rot_mat,
+                                       ref_point=np.copy(motor_obj.bottom_mount_pos))
+
+        elif axis == "z":
+            rot_mat = np.array([[1, 0, 0],
+                                [0, 0, -1],
+                                [0, 1, 0]])
+            motor_obj.rotate_wrt_point(rot_mat=rot_mat,
+                                       ref_point=np.copy(motor_obj.bottom_mount_pos))
+            pass
+
+
+    elif model == "XA07A":
+        print("Create a XA10A motor, moving along x rotation_axis.")
+        motor_obj = xyMotor(upperLim=10 * 1000,
+                            lowerLim=-10 * 1000,
+                            res=0,
+                            backlash=100,
+                            speed_um_per_ps=1 * 1000 / 1e12,
+                            dimension=[70e3, 70e3],
+                            height=21e3,
+                            color=color)
+        if axis == 'x':
+            pass
+        elif axis == 'y':
+            rot_mat = np.array([[0, -1, 0],
+                                [1, 0, 0],
+                                [0, 0, 1]])
+            rot_mat = np.dot(rot_mat, np.array([[0, 0, 1],
+                                                [0, 1, 0],
+                                                [-1, 0, 0]]))
+            motor_obj.rotate_wrt_point(rot_mat=rot_mat,
+                                       ref_point=np.copy(motor_obj.bottom_mount_pos))
+        elif axis == "z":
+            rot_mat = np.array([[1, 0, 0],
+                                [0, 0, -1],
+                                [0, 1, 0]])
+            motor_obj.rotate_wrt_point(rot_mat=rot_mat,
+                                       ref_point=np.copy(motor_obj.bottom_mount_pos))
+            pass
+
+    elif model == "ABL1000WB":
+        print("Create a ABL1000WB motor, moving along x rotation_axis.")
+        motor_obj = xyMotor(upperLim=25 * 1000,
+                            lowerLim=-25 * 1000,
+                            res=0.002,
+                            backlash=1,
+                            speed_um_per_ps=1 * 1000 / 1e12,
+                            dimension=[307e3, 185e3],
+                            height=75e3,
+                            color=color)
+        if axis == 'x':
+            pass
+        elif axis == 'y':
+            print("Warning, cannot create ABL1000WB along y rotation_axis automatically.")
+            print("Please create this motor manually.")
+        elif axis == "z":
+            rot_mat = np.array([[1, 0, 0],
+                                [0, 0, -1],
+                                [0, 1, 0]])
+            motor_obj.rotate_wrt_point(rot_mat=rot_mat,
+                                       ref_point=np.copy(motor_obj.bottom_mount_pos))
+            pass
+
+    elif model == "RA10A":
+        print("Create a {} motor, rotating around y rotation_axis.".format(model))
+        motor_obj = RotationMotor(upperLim=10 * np.pi,
+                                  lowerLim=-10 * np.pi,
+                                  res=0,  # np.deg2rad(0.0002),
+                                  backlash=np.deg2rad(0.01),
+                                  speed_rad_per_ps=np.deg2rad(0.1) / 1e12,
+                                  dimension=[100e3, 100e3],
+                                  height=60e3,
+                                  color=color)
+
+    elif model == "RA05A":
+        print("Create a {} motor, rotating around y rotation_axis.".format(model))
+        motor_obj = RotationMotor(upperLim=np.deg2rad(360),
+                                  lowerLim=-np.deg2rad(360),
+                                  res=0,  # np.deg2rad(0.002),
+                                  backlash=np.deg2rad(0.01),
+                                  speed_rad_per_ps=np.deg2rad(0.1) / 1e12,
+                                  dimension=[100e3, 100e3],
+                                  height=60e3,
+                                  color=color)
+        if axis == 'x':
+            print("Rotate motor to rotate around x rotation_axis")
+            rot_mat = np.array([[0, -1, 0],
+                                [1, 0, 0],
+                                [0, 0, 1]])
+            motor_obj.rotate_wrt_point(rot_mat=rot_mat,
+                                       ref_point=np.copy(motor_obj.bottom_mount_pos))
+        elif axis == 'y':
+            pass
+        elif axis == "z":
+            print("Rotate motor to rotate around z rotation_axis")
+            rot_mat = np.array([[0, 0, 1],
+                                [0, 1, 0],
+                                [-1, 0, 0]])
+            motor_obj.rotate_wrt_point(rot_mat=rot_mat,
+                                       ref_point=np.copy(motor_obj.bottom_mount_pos))
+            pass
+
+    elif model == "ZA10A":
+        print("Create a XA10A motor, moving along y rotation_axis.")
+        motor_obj = zMotor(upperLim=7e3,
+                           lowerLim=-7e3,
+                           res=0,  # 0.1,
+                           backlash=100,
+                           speed_um_per_ps=1 * 1000 / 1e12,
+                           dimension=[100e3, 100e3],
+                           height=30e3,
+                           color=color)
+
+    elif model == "SA07A":
+        print("Create a SA07A motor, rotating around z rotation_axis.")
+        motor_obj = SwivalMotor(upperLim=np.deg2rad(5),
+                                lowerLim=-np.deg2rad(5),
+                                res=0,  # np.deg2rad(0.000756),
+                                backlash=np.deg2rad(0.01),
+                                speed_rad_per_ps=np.deg2rad(0.4) / 1e12,
+                                dimension=[70e3, 70e3],
+                                rot_center_height=rot_center_height,
+                                height=26e3,
+                                color=color)
+        if axis == 'x':
+            print("Rotate motor to rotate around x rotation_axis")
+
+            rot_mat = np.array([[1, 0, 0],
+                                [0, 0, 1],
+                                [0, -1, 0]])
+            motor_obj.rotate_wrt_point(rot_mat=rot_mat,
+                                       ref_point=np.copy(motor_obj.bottom_mount_pos))
+        elif axis == 'y':
+            print("Rotate motor to rotate around y rotation_axis")
+
+            rot_mat = np.array([[0, -1, 0],
+                                [1, 0, 0],
+                                [0, 0, 1]])
+            rot_mat = np.dot(rot_mat, np.array([[0, 0, 1],
+                                                [0, 1, 0],
+                                                [-1, 0, 0]]))
+            motor_obj.rotate_wrt_point(rot_mat=rot_mat,
+                                       ref_point=np.copy(motor_obj.bottom_mount_pos))
+        elif axis == "z":
+            pass
+
+    elif model == "SA05A-R2S01":
+        print("Create a {} motor pair. The normal is pointing along y".format(model))
+        motor_obj1 = SwivalMotor(upperLim=np.deg2rad(5),
+                                 lowerLim=-np.deg2rad(5),
+                                 res=0,  # np.deg2rad(0.002126),
+                                 backlash=np.deg2rad(0.01),
+                                 speed_rad_per_ps=np.deg2rad(0.4) / 1e12,
+                                 dimension=[50e3, 50e3],
+                                 rot_center_height=68,
+                                 height=18e3,
+                                 color=color)
+        motor_obj2 = SwivalMotor(upperLim=np.deg2rad(5),
+                                 lowerLim=-np.deg2rad(5),
+                                 res=0,  # np.deg2rad(0.002126),
                                  backlash=np.deg2rad(0.01),
                                  speed_rad_per_ps=np.deg2rad(0.4) / 1e12,
                                  dimension=[50e3, 50e3],

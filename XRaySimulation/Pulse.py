@@ -93,7 +93,7 @@ class saseSource:
                                               randomSeed=randomSeed)
 
         # target energy
-        pulse_energy = min(5.0, np.random.normal(loc=self.mean_pulse_energy_uJ,
+        pulse_energy = max(5.0, np.random.normal(loc=self.mean_pulse_energy_uJ,
                                                  scale=self.pulse_energy_sigma_uJ))
 
         # Apply scaling to obtain the corresponding pulse energy

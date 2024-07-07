@@ -133,7 +133,6 @@ def get_crystal_reflectivity(device_list, kin_list):
 
     efficiency_holder = np.zeros((d_num, k_num))
     kout_holder = np.zeros((d_num + 1, k_num, 3))
-    total_efficiency_holder = np.zeros(k_num)
 
     kout_holder[0, :, :] = np.copy(kin_list)[:, :]
 

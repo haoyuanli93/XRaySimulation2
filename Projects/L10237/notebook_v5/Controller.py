@@ -11,7 +11,7 @@ from XRaySimulation.Machine import Motors
 import MotorStack
 import controllerUtil
 
-si220 = {'thickness': 1.9201 * 1e-4,
+si220 = {'d': 1.9201 * 1e-4,
          "chi0": complex(-0.10169E-04, 0.16106E-06),
          "chih_sigma": complex(0.61786E-05, - 0.15508E-06),
          "chihbar_sigma": complex(0.61786E-05, -0.15508E-06),
@@ -19,7 +19,7 @@ si220 = {'thickness': 1.9201 * 1e-4,
          "chihbar_pi": complex(0.48374E-05, -0.11996E-06),
          }
 
-si111 = {'thickness': 3.1355 * 1e-4,
+si111 = {'d': 3.1355 * 1e-4,
          "chi0": complex(-0.10169E-04, 0.16106E-06),
          "chih_sigma": complex(0.53693E-05, -0.11228E-06),
          "chihbar_sigma": complex(0.53693E-05, -0.11228E-06),
@@ -27,7 +27,7 @@ si111 = {'thickness': 3.1355 * 1e-4,
          "chihbar_pi": complex(0.49322E-05, -0.10272E-06),
          }
 
-dia111 = {'thickness': 2.0593 * 1e-4,
+dia111 = {'d': 2.0593 * 1e-4,
           "chi0": complex(-0.15217E-04, 0.13392E-07),
           "chih_sigma": complex(0.55417E-05, -0.93083E-08),
           "chihbar_sigma": complex(0.55417E-05, -0.93083E-08),

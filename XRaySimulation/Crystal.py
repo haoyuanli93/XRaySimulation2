@@ -94,7 +94,7 @@ class ChannelCut:
 
         # Create 2 crystals
         self.crystal_list = [
-            CrystalBlock3D(h=np.array([0., 2. * np.pi / crystal_property['thickness'], 0.]),
+            CrystalBlock3D(h=np.array([0., 2. * np.pi / crystal_property['d'], 0.]),
                            normal=np.array([0., -np.cos(asymmetry_angle_list[x]), np.sin(asymmetry_angle_list[x])]),
                            surface_point=np.zeros(3, dtype=np.float64),
                            thickness=thickness_list[x],
@@ -371,7 +371,7 @@ class CrystalBlock3D_auto:
                 crystal_property = pickle.load(handle)
 
         # Reciprocal lattice in um^-1
-        self.h = np.copy(np.array([0., 2. * np.pi / crystal_property['thickness'], 0.]))
+        self.h = np.copy(np.array([0., 2. * np.pi / crystal_property['h'], 0.]))
         self.normal = np.array([0., -np.cos(asymmetry_angle), np.sin(asymmetry_angle)])
         self.surface_point = np.zeros(3, dtype=np.float64)
         self.thickness = thickness

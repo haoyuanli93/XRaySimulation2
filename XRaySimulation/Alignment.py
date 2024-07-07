@@ -5,7 +5,7 @@ from XRaySimulation import RockingCurve
 
 
 def align_crystal_around_axis(crystal, kin, initial_angle, rotation_axis, bandwidth_keV=0.5e-3, fwhm_center=True,
-                              polarization='s', rot_center=None, rot_crystal=True):
+                              polarization='s', rot_center=None, rot_crystal=True, iteration=3):
     if crystal.type == 'Crystal: Bragg Reflection':
         if rot_center is None:
             rot_center = np.copy(crystal.surface_point)
@@ -35,7 +35,7 @@ def align_crystal_around_axis(crystal, kin, initial_angle, rotation_axis, bandwi
     # Search for the rocking curve around this
     scan_range = [initial_angle - np.deg2rad(2), initial_angle + np.deg2rad(2)]
     scan_num = 400
-    for idx in range(3):
+    for idx in range(iteration):
         (angles, reflect_s, reflect_p, b, kout_array
          ) = rock_fun(kin_array=kin_array, rotation_axis=rotation_axis, crystal=crystal,
                       scan_range=scan_range, scan_number=scan_num)

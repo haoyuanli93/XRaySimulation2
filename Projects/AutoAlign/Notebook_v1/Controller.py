@@ -4,7 +4,7 @@ sys.path.append("../../../")
 
 import numpy as np
 
-from XRaySimulation import Crystal, util, Pulse
+from XRaySimulation import Crystal, util, Pulse, Efficiency
 from XRaySimulation.Machine import Motors
 
 # The following modules are loaded as a temporary solution
@@ -27,8 +27,8 @@ dia111 = {'d': 2.0593 * 1e-4,
           "chihbar_pi": complex(0.37333E-05, -0.48247E-08),
           }
 
-g1_period = 1  # um
-g2_period = 1  # um
+g1_period = 1.  # um
+g2_period = 1.  # um
 
 
 class XppController:
@@ -105,13 +105,6 @@ class XppController:
         self.diode_noise_level = {'ipm2': 100, 'dg1': 0.01, 'd1': 0.01, 'd2': 0.01, 'd3': 0.01, 'd4': 0.01,
                                   'd5': 0.01, 'd6': 0.01, 'pump': 0.01, 'probe': 0.01, }
 
-        # Step 6 Add cameras
-        self.pixel_num_x = 2048
-        self.pixel_num_y = 2048
-
-        self.pixel_coor_x = np.linspace(-self.pixel_num_x * 6.5 / 3, self.pixel_num_x * 6.5 / 3, self.pixel_num_x)
-        self.pixel_coor_y = np.linspace(-self.pixel_num_y * 6.5 / 3, self.pixel_num_y * 6.5 / 3, self.pixel_num_x)
-
         # -------------------------------------------------------------------
         #   Information of the diode
 
@@ -131,7 +124,7 @@ class XppController:
         # Save miniSD transmission function for a specified incident k vector
         # notice that I only save this information for the 1D case.
         # Saving this information for the 3D case is too expensive for the current situation.
-        self.crystal_efficiency = None
+        self.efficiency_dict = None
         # -------------------------------------------------------------------
 
         # ------------------------------------------------------------------
@@ -172,12 +165,113 @@ class XppController:
     def plot_miniSD_rocking(self, ax_list):
         controllerUtil.plot_miniSD_rocking(controller=self, ax_list=ax_list)
 
-    def get_diode(self, spectrum_intensity, k_grid, gpu=False, force=False):
-        return controllerUtil.get_diode(controller=self, spectrum_intensity=spectrum_intensity,
-                                        k_grid=k_grid, gpu=gpu, force=force)
+    def get_diode(self, spectrum_intensity, ):
+        # Convert the shape of the spectrum_intensity to a 2D array to facilitate the calculation
+        if len(spectrum_intensity.shape) == 1:
+            spectrum_intensity = np.copy(spectrum_intensity[np.newaxis, :])
 
-    def get_reflectivity(self):
-        return controllerUtil.get_reflectivity(controller=self)
+        # Calculate the diode value at each location
+        ipm2 = np.sum(np.multiply(spectrum_intensity, self.efficiency_dict['mono'][np.newaxis, :]), axis=-1)
+        d1 = np.sum(np.multiply(spectrum_intensity, self.efficiency_dict['d1'][np.newaxis, :]), axis=-1)
+        d2 = np.sum(np.multiply(spectrum_intensity, self.efficiency_dict['d2'][np.newaxis, :]), axis=-1)
+        d3 = np.sum(np.multiply(spectrum_intensity, self.efficiency_dict['d3'][np.newaxis, :]), axis=-1)
+        d4_tmp = np.sum(np.multiply(spectrum_intensity, self.efficiency_dict['d4'][np.newaxis, :]), axis=-1)
+        d5_tmp = np.sum(np.multiply(spectrum_intensity, self.efficiency_dict['d5'][np.newaxis, :]), axis=-1)
+        d6_tmp = np.sum(np.multiply(spectrum_intensity, self.efficiency_dict['d6'][np.newaxis, :]), axis=-1)
+
+        d4 = np.zeros_like(d4_tmp)
+        d5 = np.zeros_like(d4_tmp)
+        d6 = np.zeros_like(d4_tmp)
+        if self.cc_shutter:
+            d6 += d6_tmp
+        if self.vcc_shutter:
+            d4 = d4_tmp
+            d5 = d5_tmp
+            d6 += d5_tmp
+
+        return {'ipm2': ipm2,
+                'd1': d1,
+                'd2': d2,
+                'd3': d3,
+                'd4': d4,
+                'd5': d5,
+                'd6': d6, }
+
+    def update_efficiency_dict(self, sase_source):
+        # Generate the wave-vector according to the source
+        kin_array = np.zeros((sase_source.kzCoor.shape[0], 3))
+        kin_array[:, 2] = np.copy(sase_source.kzCoor)
+
+        self.efficiency_dict = self.get_reflectivity(kin_array=kin_array)
+
+    def get_reflectivity(self, kin_array):
+        # Get the efficiency curve from the mono
+        (mono_total_efficiency,
+         mono_efficiency,
+         kout_mono) = Efficiency.get_crystal_reflectivity(device_list=[self.mono_t1.optics, self.mono_t2.optics],
+                                                          kin_list=kin_array)
+        kout_mono = kout_mono[-1]
+
+        # Get the efficiency from the grating
+        g1_efficiency = self.g1.grating_m1.get_grating_coefficient(kin=kout_mono[kout_mono.shape[0] // 2],
+                                                                   order=1)
+        g1_efficiency = np.square(np.abs(g1_efficiency))
+
+        # ------------------------------------------------
+        # Get the CC branch kin
+        kin_cc = np.copy(kout_mono) + np.copy(self.g1.grating_m1.momentum_transfer)[np.newaxis, :]
+
+        # Get the CC reflectivity
+        device_list = self.t1.optics.crystal_list + self.t6.optics.crystal_list
+
+        (total_efficiency_holder,
+         efficiency_holder,
+         kout_holder) = Efficiency.get_crystal_reflectivity(device_list=device_list,
+                                                            kin_list=kin_cc)
+        cc_efficiency = np.copy(total_efficiency_holder)
+        cc1_efficiency = np.copy(efficiency_holder[0] * efficiency_holder[1])
+        cc6_efficiency = np.copy(efficiency_holder[2] * efficiency_holder[3])
+
+        # ----------------------------------------------
+        # Get the VCC branch efficiency curve
+        kin_vcc = np.copy(kout_mono) + np.copy(self.g1.grating_1.momentum_transfer)[np.newaxis, :]
+
+        # Get the device_list
+        device_list = (self.t2.optics.crystal_list + self.t3.optics.crystal_list
+                       + self.t45.optics1.crystal_list + self.t45.optics2.crystal_list)
+
+        (total_efficiency_holder,
+         efficiency_holder,
+         kout_holder) = Efficiency.get_crystal_reflectivity(device_list=device_list,
+                                                            kin_list=kin_vcc)
+
+        vcc_efficiency = np.copy(total_efficiency_holder)
+        cc2_efficiency = np.copy(efficiency_holder[0] * efficiency_holder[1])
+        cc3_efficiency = np.copy(efficiency_holder[2] * efficiency_holder[3])
+        cc4_efficiency = np.copy(efficiency_holder[3] * efficiency_holder[4])
+        cc5_efficiency = np.copy(efficiency_holder[5] * efficiency_holder[6])
+
+        return {'g1': g1_efficiency,
+                'g2': g1_efficiency,
+                'mono 1': mono_efficiency[0, :],
+                'mono 2': mono_efficiency[1, :],
+                'mono': mono_total_efficiency,
+                "cc": cc_efficiency,
+                "vcc": vcc_efficiency,
+                "cc1": cc1_efficiency,
+                "cc2": cc2_efficiency,
+                "cc3": cc3_efficiency,
+                "cc4": cc4_efficiency,
+                "cc5": cc5_efficiency,
+                "cc6": cc6_efficiency,
+                'd1': mono_total_efficiency * g1_efficiency * cc1_efficiency,
+                'd2': mono_total_efficiency * g1_efficiency * cc2_efficiency,
+                'd3': mono_total_efficiency * g1_efficiency * cc2_efficiency * cc3_efficiency,
+                'd4': mono_total_efficiency * g1_efficiency * cc2_efficiency * cc3_efficiency * cc4_efficiency,
+                'd5': (mono_total_efficiency * g1_efficiency * cc2_efficiency * cc3_efficiency * cc4_efficiency
+                       * cc5_efficiency),
+                'd6': mono_total_efficiency * g1_efficiency * cc1_efficiency * cc6_efficiency,
+                }
 
     def show_cc(self):
         self.cc_shutter = True
@@ -225,7 +319,7 @@ def get_optics():
     #   Get crystal for XPP mono
     # ------------------------------------------
     mono_miscut = [np.deg2rad(0.0), np.deg2rad(0.0)]
-    mono_diamond = [Crystal.CrystalBlock3D(h=np.array([0., 2. * np.pi / dia111['thickness'], 0.]),
+    mono_diamond = [Crystal.CrystalBlock3D(h=np.array([0., 2. * np.pi / dia111['d'], 0.]),
                                            normal=np.array(
                                                [0., -np.cos(mono_miscut[x]), np.sin(mono_miscut[x])]),
                                            surface_point=np.zeros(3, dtype=np.float64),
@@ -376,7 +470,7 @@ def assemble_motors_and_optics():
 
 def install_xpp_mono(controller):
     # Insatll the XPP mono
-    bragg = util.get_bragg_angle(wave_length=controller.wavelength, plane_distance=dia111['thickness'])
+    bragg = util.get_bragg_angle(wave_length=controller.wavelength, plane_distance=dia111['d'])
     # Assume that the gap size is 50 cm, then the z offset is gap / np.tan(2 * bragg)
     gap = 500e3
     z_offset = gap / np.tan(2 * bragg)
