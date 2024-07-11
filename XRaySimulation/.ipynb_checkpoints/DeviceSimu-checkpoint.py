@@ -11,7 +11,7 @@ def get_bragg_reflectivity_fix_crystal(kin, thickness, crystal_h, normal, chi_di
     """
     Calculate the reflectivity with a fixed crystal.
     
-    :param kin: wave vector array.  Numpy array of shape (n, 3)
+    :param kin: wave vector array.  Numpy array of shape (normal, 3)
     :param thickness: float
     :param crystal_h: Numpy array of shape (3,)
     :param normal: numpy array of shape (3,)
@@ -21,8 +21,8 @@ def get_bragg_reflectivity_fix_crystal(kin, thickness, crystal_h, normal, chi_di
 
     # Extract the parameter
     chi0 = chi_dict["chi0"]
-    chih_sigma = chi_dict["chih_sigma"]
-    chihbar_sigma = chi_dict["chih_sigma"]
+    chih_sigma = chi_dict["chih"]
+    chihbar_sigma = chi_dict["chih"]
     chih_pi = chi_dict["chih_pi"]
     chihbar_pi = chi_dict["chih_pi"]
 
@@ -107,18 +107,18 @@ def get_bragg_reflectivity_per_entry(kin, thickness, crystal_h, normal, chi_dict
     """
     Calculate the reflectivity for each element. 
     
-    :param kin: wave vector array.  Numpy array of shape (n, 3)
+    :param kin: wave vector array.  Numpy array of shape (normal, 3)
     :param thickness: float
-    :param crystal_h: Numpy array of shape (n, 3)
-    :param normal: numpy array of shape (n, 3)
+    :param crystal_h: Numpy array of shape (normal, 3)
+    :param normal: numpy array of shape (normal, 3)
     :param chi_dict: The dictionary for parameters of electric susceptability.
     :return:
     """
 
     # Extract the parameter
     chi0 = chi_dict["chi0"]
-    chih_sigma = chi_dict["chih_sigma"]
-    chihbar_sigma = chi_dict["chih_sigma"]
+    chih_sigma = chi_dict["chih"]
+    chihbar_sigma = chi_dict["chih"]
     chih_pi = chi_dict["chih_pi"]
     chihbar_pi = chi_dict["chih_pi"]
 
@@ -255,7 +255,7 @@ def get_bragg_rocking_curve(kin,
     h_array = np.zeros((scan_number, 3), dtype=np.float64)
     normal_array = np.zeros((scan_number, 3), dtype=np.float64)
 
-    # Get the scanning angle
+    # Get the scanning si111_angle
     angles = np.linspace(start=-scan_range / 2, stop=scan_range / 2, num=scan_number)
 
     for idx in range(scan_number):
@@ -304,7 +304,7 @@ def get_bragg_rocking_curve_channelcut(kin,
     h_array_2 = np.zeros((scan_number, 3), dtype=np.float64)
     normal_array_2 = np.zeros((scan_number, 3), dtype=np.float64)
 
-    # Get the scanning angle
+    # Get the scanning si111_angle
     angles = np.linspace(start=-scan_range / 2, stop=scan_range / 2, num=scan_number)
 
     for idx in range(scan_number):
@@ -361,7 +361,7 @@ def align_crystal_reciprocal_lattice(crystal, axis, rot_center=None):
     if rot_center is None:
         rot_center = np.copy(crystal.surface_point)
 
-    # 1 Get the angle
+    # 1 Get the si111_angle
     cos_val = np.dot(axis, crystal.h) / np.linalg.norm(axis) / np.linalg.norm(crystal.h)
     rot_angle = np.arccos(np.clip(cos_val, -1, 1))
 
@@ -388,18 +388,18 @@ def align_crystal_geometric_bragg_reflection(crystal, kin, rot_direction=1, rot_
     #   Align the recirpocal lattice with kin_array
     ###########################
     align_crystal_reciprocal_lattice(crystal=crystal, axis=kin, rot_center=rot_center)
-    # print(crystal.h)
+    # print(crystal.BraggG)
 
     ###########################
     #   Alignment based on geometric theory of bragg diffraction
     ###########################
-    # Estimate the Bragg angle
+    # Estimate the Bragg si111_angle
     bragg_estimation = util.get_bragg_angle(wave_length=two_pi / np.linalg.norm(kin),
                                             plane_distance=two_pi / np.linalg.norm(crystal.h))
 
-    # print("Bragg angle:{:.2e}".format(np.rad2deg(bragg_estimation)))
+    # print("Bragg si111_angle:{:.2e}".format(np.rad2deg(bragg_estimation)))
 
-    # Align the crystal to the estimated Bragg angle
+    # Align the crystal to the estimated Bragg si111_angle
     rot_mat = util.rot_mat_in_yz_plane(theta=(bragg_estimation + np.pi / 2) * rot_direction)
 
     crystal.rotate_wrt_point(rot_mat=rot_mat,
@@ -484,7 +484,7 @@ def align_channel_cut_dynamical_bragg_reflection(channelcut,
     # ------------------------------------------------------
     # Align the channel-cut such that the reciprocal lattice is anti-parallel to the kin_array
     # ------------------------------------------------------
-    # 1 Get the angle
+    # 1 Get the si111_angle
     cos_val = (np.dot(kin, channelcut.crystal_list[0].h)
                / np.linalg.norm(kin) / np.linalg.norm(channelcut.crystal_list[0].h))
     rot_angle = np.arccos(np.clip(cos_val, -1.0, 1.0))
@@ -501,13 +501,13 @@ def align_channel_cut_dynamical_bragg_reflection(channelcut,
                                 ref_point=rot_center)
 
     # ------------------------------------------------------
-    # Align the channel-cut according to the geometric Bragg angle.
+    # Align the channel-cut according to the geometric Bragg si111_angle.
     # The rotation direction is determined by the crystal geometry.
     # ------------------------------------------------------
-    # Rotate according to the geometric Bragg angle
+    # Rotate according to the geometric Bragg si111_angle
     geo_Bragg_angle = util.get_bragg_angle(wave_length=two_pi / np.linalg.norm(kin),
                                            plane_distance=two_pi / np.linalg.norm(channelcut.crystal_list[0].h))
-    # print("The geometric Bragg angle is {:.2f} deg".format(np.rad2deg(geo_Bragg_angle)))
+    # print("The geometric Bragg si111_angle is {:.2f} deg".format(np.rad2deg(geo_Bragg_angle)))
 
     # Rotate the channel-cut according to the geometry of the channel-cut crystal
     if channelcut.first_crystal_loc == "lower left":
@@ -586,7 +586,7 @@ def get_channel_cut_auto_align_rotMat(channelcut,
     geo_Bragg_angle = util.get_bragg_angle(wave_length=two_pi / np.linalg.norm(kin),
                                            plane_distance=two_pi / np.linalg.norm(channelcut.crystal_list[0].h))
 
-    # Depending on the geometry of the channel-cut crystal, the rotation angle of the kin_array is different
+    # Depending on the geometry of the channel-cut crystal, the rotation si111_angle of the kin_array is different
     if channelcut.first_crystal_loc == "upper left":
         rotMat1 = util.get_rotmat_around_axis(angleRadian=geo_Bragg_angle + np.pi / 2,
                                               axis=rotationAxis)
@@ -602,7 +602,7 @@ def get_channel_cut_auto_align_rotMat(channelcut,
     kin_rot = np.dot(rotMat1, kin)
     kin_rot /= np.linalg.norm(kin_rot)
 
-    # Get the angle between current h and rotated kin_array
+    # Get the si111_angle between current BraggG and rotated kin_array
     h_dir = channelcut.crystal_list[0].h / np.linalg.norm(channelcut.crystal_list[0].h)
     rot_dir = np.cross(h_dir, kin_rot)
     # sin_ang = np.linalg.norm(rot_dir)
@@ -610,7 +610,7 @@ def get_channel_cut_auto_align_rotMat(channelcut,
     if np.abs(np.abs(cos_ang) - 1) < 1e-6:
         rot_angle = np.pi
     else:  # These two are not parallel to each other
-        # We can determine the angle from the arccos
+        # We can determine the si111_angle from the arccos
         rot_angle = np.arccos(cos_ang)
         # We can determine whether it is clockwise or counter-clockwise
         rot_dir /= np.linalg.norm(rot_dir)
@@ -676,7 +676,7 @@ def get_channel_cut_auto_align_rotMat(channelcut,
 
 
 def align_grating_normal_direction(grating, axis):
-    # 1 Get the angle
+    # 1 Get the si111_angle
     cos_val = np.dot(axis, grating.normal) / np.linalg.norm(axis) / np.linalg.norm(grating.normal)
     rot_angle = np.arccos(cos_val)
 
@@ -692,7 +692,7 @@ def align_grating_normal_direction(grating, axis):
 
 
 def align_telescope_optical_axis(telescope, axis):
-    # 1 Get the angle
+    # 1 Get the si111_angle
     cos_val = np.dot(axis, telescope.lens_axis) / np.linalg.norm(axis) / np.linalg.norm(telescope.lens_axis)
     rot_angle = np.arccos(cos_val)
 
@@ -735,7 +735,7 @@ def get_bragg_rocking_curve_xz(kin,
     h_array = np.zeros((scan_number, 3), dtype=np.float64)
     normal_array = np.zeros((scan_number, 3), dtype=np.float64)
 
-    # Get the scanning angle
+    # Get the scanning si111_angle
     angles = np.linspace(start=-scan_range / 2, stop=scan_range / 2, num=scan_number)
 
     for idx in range(scan_number):
@@ -772,7 +772,7 @@ def align_crystal_reciprocal_lattice_xz(crystal, axis, rot_center=None):
     if rot_center is None:
         rot_center = np.copy(crystal.surface_point)
 
-    # 1 Get the angle
+    # 1 Get the si111_angle
     cos_val = np.dot(axis, crystal.h) / np.linalg.norm(axis) / np.linalg.norm(crystal.h)
     rot_angle = np.arccos(np.clip(cos_val, -1, 1))
 
@@ -799,18 +799,18 @@ def align_crystal_geometric_bragg_reflection_xz(crystal, kin, rot_direction=1, r
     #   Align the recirpocal lattice with kin_array
     ###########################
     align_crystal_reciprocal_lattice_xz(crystal=crystal, axis=kin, rot_center=rot_center)
-    # print(crystal.h)
+    # print(crystal.BraggG)
 
     ###########################
     #   Alignment based on geometric theory of bragg diffraction
     ###########################
-    # Estimate the Bragg angle
+    # Estimate the Bragg si111_angle
     bragg_estimation = util.get_bragg_angle(wave_length=two_pi / np.linalg.norm(kin),
                                             plane_distance=two_pi / np.linalg.norm(crystal.h))
 
-    # print("Bragg angle:{:.2e}".format(np.rad2deg(bragg_estimation)))
+    # print("Bragg si111_angle:{:.2e}".format(np.rad2deg(bragg_estimation)))
 
-    # Align the crystal to the estimated Bragg angle
+    # Align the crystal to the estimated Bragg si111_angle
     rot_mat = util.rot_mat_in_xz_plane(theta=(bragg_estimation + np.pi / 2) * rot_direction)
 
     crystal.rotate_wrt_point(rot_mat=rot_mat,
@@ -1437,7 +1437,7 @@ def get_interpolated_eField(kvec_array, coor_dict, efield_array, k0, mode, coor_
 
         new_coor_dict = {'xCoor': xCoor, 'yCoor': yCoor, 'zCoor': zCoor, 'tCoor': tCoor,
                          'kxCoor': kxCoor, 'kyCoor': kyCoor, 'kzCoor': kzCoor,
-                         'ExCoor': ExCoor, 'EyCoor': EyCoor, 'kin_grid': EzCoor, }
+                         'ExCoor': ExCoor, 'EyCoor': EyCoor, 'k_vec': EzCoor, }
 
         new_position_grid = np.zeros((nx, ny, nz, 3))
         new_position_grid[:, :, :, 0] = xCoor[:, np.newaxis, np.newaxis]

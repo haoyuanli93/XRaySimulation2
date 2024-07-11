@@ -555,7 +555,7 @@ class Silicon_tower:
         self.all_obj = install_motors_on_motor_or_adaptors(motor_tower=self.all_obj, motor_or_adaptor=self.pi)
         self.all_obj = install_motors_on_motor_or_adaptors(motor_tower=self.all_obj, motor_or_adaptor=self.roll)
 
-        # Rotate around the x rotation_axis such that it matches the angle
+        # Rotate around the x rotation_axis such that it matches the si111_angle
         rot_mat = np.array([[np.cos(tilt_angle3), 0, np.sin(tilt_angle3)],
                             [0, 1, 0],
                             [-np.sin(tilt_angle3), 0, np.cos(tilt_angle3)]])

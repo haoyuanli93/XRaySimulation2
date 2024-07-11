@@ -18,7 +18,7 @@ def align_crystal_around_axis(crystal, kin, initial_angle, rotation_axis, bandwi
         print("crystal has to be either 'Crystal: Bragg Reflection' or 'Channel cut with two surfaces' ")
         return 1
 
-    # Get the wavevector array with the corresponding kin and bandwidth
+    # Get the wavevector array with the corresponding k_vec and bandwidth
     k_num = 100
     kin_len = np.linalg.norm(kin)
     kin_direction = kin / kin_len
@@ -43,13 +43,13 @@ def align_crystal_around_axis(crystal, kin, initial_angle, rotation_axis, bandwi
         if polarization == 's':
             # Find the best location
             reflectivity = np.mean(np.square(np.abs(reflect_s)) / np.abs(b), axis=0)
-        elif polarization == 'p':
+        elif polarization == 'polar':
             reflectivity = np.mean(np.square(np.abs(reflect_p)) / np.abs(b), axis=0)
         else:
-            print("polarization can only be s or p")
+            print("polarization can only be s or polar")
             return 1
 
-        # Find the peak angle
+        # Find the peak si111_angle
         angle_idx = np.argmax(reflectivity)
         peak_angle = angles[angle_idx]
 
@@ -77,7 +77,7 @@ def align_crystal_around_axis(crystal, kin, initial_angle, rotation_axis, bandwi
 
 
 def align_grating_normal_direction(grating, axis):
-    # 1 Get the angle
+    # 1 Get the si111_angle
     cos_val = np.dot(axis, grating.normal) / np.linalg.norm(axis) / np.linalg.norm(grating.normal)
     rot_angle = np.arccos(cos_val)
 
@@ -93,7 +93,7 @@ def align_grating_normal_direction(grating, axis):
 
 
 def align_telescope_optical_axis(telescope, axis):
-    # 1 Get the angle
+    # 1 Get the si111_angle
     cos_val = np.dot(axis, telescope.lens_axis) / np.linalg.norm(axis) / np.linalg.norm(telescope.lens_axis)
     rot_angle = np.arccos(cos_val)
 

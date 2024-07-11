@@ -11,16 +11,16 @@ from XRaySimulation import util
 
 si220 = {'thickness': 1.9201 * 1e-4,
          "chi0": complex(-0.80575E-05, 0.10198E-06),
-         "chih_sigma": complex(0.48909E-05, -0.98241E-07),
-         "chihbar_sigma": complex(0.48909E-05, -0.98241E-07),
+         "chih": complex(0.48909E-05, -0.98241E-07),
+         "chihbar": complex(0.48909E-05, -0.98241E-07),
          "chih_pi": complex(0.40482E-05, -0.80452E-07),
          "chihbar_pi": complex(0.40482E-05, -0.80452E-07),
          }
 
 dia111 = {'thickness': 2.0593 * 1e-4,
           "chi0": complex(-0.12067E-04, 0.82462E-08),
-          "chih_sigma": complex(0.43910E-05, -0.57349E-08),
-          "chihbar_sigma": complex(0.43910E-05, -0.57349E-08),
+          "chih": complex(0.43910E-05, -0.57349E-08),
+          "chihbar": complex(0.43910E-05, -0.57349E-08),
           "chih_pi": complex(0.37333E-05, -0.48247E-08),
           "chihbar_pi": complex(0.37333E-05, -0.48247E-08),
           }
@@ -83,7 +83,7 @@ def get_raytracing_trajectory(controller,
 
 
 def align_xpp_mono(controller):
-    # Get the geometry bragg angle
+    # Get the geometry bragg si111_angle
     bragg = util.get_bragg_angle(wave_length=np.pi * 2 / controller.gaussian_pulse.klen0, plane_distance=dia111['thickness'])
 
     # Align the first crystal
@@ -138,11 +138,11 @@ def align_miniSD_SASE(controller):
         final_plane_normal=np.array([0, 0, -1]))
     kout = np.copy(kout[-1])
 
-    # Get the geometry bragg angle
+    # Get the geometry bragg si111_angle
     bragg = util.get_bragg_angle(wave_length=np.pi * 2 / controller.gaussian_pulse.klen0, plane_distance=si220['thickness'])
     print(bragg)
 
-    # Step 1, move the mono1 th to the geometric Bragg angle
+    # Step 1, move the mono1 th to the geometric Bragg si111_angle
     # _ = controller.t1.th_umv(target=bragg)
     # _ = controller.t2.th_umv(target=bragg)
     # _ = controller.t3.th_umv(target=bragg)
@@ -233,11 +233,11 @@ def get_miniSD_rocking(controller):
         final_plane_normal=np.array([0, 0, -1]))
     kout = np.copy(kout[-1])
 
-    # Get the geometry bragg angle
+    # Get the geometry bragg si111_angle
     bragg = util.get_bragg_angle(wave_length=np.pi * 2 / controller.gaussian_pulse.klen0, plane_distance=si220['thickness'])
     print(bragg)
 
-    # Step 1, move the mono1 th to the geometric Bragg angle
+    # Step 1, move the mono1 th to the geometric Bragg si111_angle
     # _ = controller.t1.th_umv(target=bragg)
     # _ = controller.t2.th_umv(target=bragg)
     # _ = controller.t3.th_umv(target=bragg)
@@ -492,9 +492,9 @@ def get_diode(controller, spectrum_intensity, k_grid, gpu=False, force=False):
     # Step 1: check if the sase pulse is 1D
     if (len(spectrum_intensity.shape) == 1) and (not gpu):
         # Perform the 1D calculation
-        if np.max(np.abs(controller.crystal_efficiency['kin_grid'] - k_grid)) > 1e-6:
-            print("The maximal difference between the kin_grid of the SASE pulse "
-                  "and the kin_grid of the energy efficiency is larger than 1e-6.")
+        if np.max(np.abs(controller.crystal_efficiency['k_vec'] - k_grid)) > 1e-6:
+            print("The maximal difference between the k_vec of the SASE pulse "
+                  "and the k_vec of the energy efficiency is larger than 1e-6.")
             print("Do not do the calculation unless setting force=True to force the calcluation.")
             if force:
                 result = _get_diode(controller=controller, spectrum_intensity=spectrum_intensity)

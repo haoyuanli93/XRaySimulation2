@@ -86,7 +86,7 @@ class ChannelCut:
         # Get wave-length
         wave_length = 2 * np.pi / util.kev_to_wavevec_length(energy=energy_keV)
 
-        # Get geometric bragg angle
+        # Get geometric bragg si111_angle
         bragg_theta = util.get_bragg_angle(wave_length=wave_length, plane_distance=crystal_property['thickness'])
 
         # Create 2 crystals
@@ -189,21 +189,21 @@ class CrystalBlock3D:
 
         if chi_dict is None:
             chi_dict = {"chi0": complex(-0.15124e-4, 0.13222E-07),
-                        "chih_sigma": complex(0.37824E-05, -0.12060E-07),
-                        "chihbar_sigma": complex(0.37824E-05, -0.12060E-07),
+                        "chih": complex(0.37824E-05, -0.12060E-07),
+                        "chihbar": complex(0.37824E-05, -0.12060E-07),
                         "chih_pi": complex(0.37824E-05, -0.12060E-07),
                         "chihbar_pi": complex(0.37824E-05, -0.12060E-07)}
 
         # zero component of electric susceptibility's fourier transform
         self.chi0 = chi_dict["chi0"]
 
-        # h component of electric susceptibility's fourier transform
-        self.chih_sigma = chi_dict["chih_sigma"]
+        # BraggG component of electric susceptibility's fourier transform
+        self.chih_sigma = chi_dict["chih"]
 
         # hbar component of electric susceptibility's fourier transform
-        self.chihbar_sigma = chi_dict["chih_sigma"]
+        self.chihbar_sigma = chi_dict["chih"]
 
-        # h component of electric susceptibility's fourier transform
+        # BraggG component of electric susceptibility's fourier transform
         self.chih_pi = chi_dict["chih_pi"]
 
         # hbar component of electric susceptibility's fourier transform
@@ -224,7 +224,7 @@ class CrystalBlock3D:
         #      The boundary is defined in the following way
         #
         #    (top, left) point 0        (middle perpendicular to controller.normal) controller.surface_point      point 1
-        #      parallel to h
+        #      parallel to BraggG
         #       point 3                                                                               point 2
         #
 
@@ -373,13 +373,13 @@ class CrystalBlock3D_auto:
         # zero component of electric susceptibility's fourier transform
         self.chi0 = crystal_property["chi0"]
 
-        # h component of electric susceptibility's fourier transform
-        self.chih_sigma = crystal_property["chih_sigma"]
+        # BraggG component of electric susceptibility's fourier transform
+        self.chih_sigma = crystal_property["chih"]
 
         # hbar component of electric susceptibility's fourier transform
-        self.chihbar_sigma = crystal_property["chih_sigma"]
+        self.chihbar_sigma = crystal_property["chih"]
 
-        # h component of electric susceptibility's fourier transform
+        # BraggG component of electric susceptibility's fourier transform
         self.chih_pi = crystal_property["chih_pi"]
 
         # hbar component of electric susceptibility's fourier transform
@@ -400,7 +400,7 @@ class CrystalBlock3D_auto:
         #      The boundary is defined in the following way
         #
         #    (top, left) point 0        (middle perpendicular to controller.normal) controller.surface_point      point 1
-        #      parallel to h
+        #      parallel to BraggG
         #       point 3                                                                               point 2
         #
 
@@ -594,7 +594,7 @@ class RectangleGrating:
         self.direction = np.ascontiguousarray(rot_mat.dot(self.direction))
         self.normal = np.ascontiguousarray(rot_mat.dot(self.normal))
 
-        # Update h and wave vector
+        # Update BraggG and wave vector
         self.__update_h()
         self.__update_period_wave_vector()
 
@@ -645,7 +645,7 @@ class YAG:
 
         :param a: The width of the groove
         :param b: The width of the tooth
-        :param n: The refraction index
+        :param normal: The refraction index
         :param height: The height of the tooth
         :param base_thickness: The thickness of the base plate
         :param direction: The direction of the wave vector transfer.
@@ -857,7 +857,7 @@ def get_crystal_param(crystal_type, miller_index, energy_kev):
                 info_holder.update({"Poisson ratio": float(words[-1])})
 
             elif words[0] == '<pre>':
-                if words[1] == '<i>n':
+                if words[1] == '<i>normal':
 
                     # Get the real part of chi0
                     a = float(words[-1][4:])
@@ -887,7 +887,7 @@ def get_crystal_param(crystal_type, miller_index, energy_kev):
                     words = line.split()
                     b = float(words[-1])
 
-                    info_holder.update({"chih_sigma": complex(a, -b)})
+                    info_holder.update({"chih": complex(a, -b)})
 
                 elif words[-1] == 'pol=Pi':
                     # Get the real part
@@ -904,8 +904,8 @@ def get_crystal_param(crystal_type, miller_index, energy_kev):
 
                     info_holder.update({"chih_pi": complex(a, -b)})
                 elif words[1] == "Bragg":
-                    if words[2] == "angle":
-                        info_holder.update({"Bragg angle (deg)": float(words[-1])})
+                    if words[2] == "si111_angle":
+                        info_holder.update({"Bragg si111_angle (deg)": float(words[-1])})
                 else:
                     pass
 

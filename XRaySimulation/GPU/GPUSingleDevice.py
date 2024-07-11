@@ -462,7 +462,7 @@ def get_bragg_reflection(reflectivity_sigma, reflectivity_pi, kout_grid, efield_
         #    denominator = alpha_tidle + sqrt_a2_b2
         #
         #    # Assemble everything
-        #    reflectivity_sigma[idx] = b_complex * chih_sigma / denominator
+        #    reflectivity_sigma[idx] = b_complex * chih / denominator
 
         # Get the output electric field due to this component
         efield_out_sigma_x = reflectivity_sigma[idx] * efield_sigma * complex(sigma_in_x)
@@ -607,7 +607,7 @@ def get_bragg_reflection_with_jacobian(reflectivity_sigma, reflectivity_pi, kout
         kout_grid[idx, 1] = kout_y
         kout_grid[idx, 2] = kout_z
 
-        # Get the jacobian :   dot(kout, n) / dot(kin_array, n)
+        # Get the jacobian :   dot(kout, normal) / dot(kin_array, normal)
         jacobian[idx] *= complex(math.fabs((dot_kn + dot_hn + m_trans) / dot_kn))
 
         # ----------------------------------------
@@ -686,7 +686,7 @@ def get_bragg_reflection_with_jacobian(reflectivity_sigma, reflectivity_pi, kout
         #    denominator = alpha_tidle + sqrt_a2_b2
         #
         #    # Assemble everything
-        #    reflectivity_sigma[idx] = b_complex * chih_sigma / denominator
+        #    reflectivity_sigma[idx] = b_complex * chih / denominator
 
         # Get the output electric field due to this component
         efield_out_sigma_x = reflectivity_sigma[idx] * efield_sigma * complex(sigma_in_x)
@@ -828,7 +828,7 @@ def get_bragg_reflection_sigma_polarization(reflectivity_sigma,
         kout_grid[idx, 1] = kout_y
         kout_grid[idx, 2] = kout_z
 
-        # Get the jacobian :   dot(kout, n) / dot(kin_array, n)
+        # Get the jacobian :   dot(kout, normal) / dot(kin_array, normal)
         jacobian[idx] *= complex(math.fabs((dot_kn + dot_hn + m_trans) / dot_kn))
 
         #####################################################################################################
@@ -948,7 +948,7 @@ def get_bragg_reflection_sigma(reflectivity_sigma,
         kout_grid[idx, 1] = kout_y
         kout_grid[idx, 2] = kout_z
 
-        # Get the jacobian :   dot(kout, n) / dot(kin_array, n)
+        # Get the jacobian :   dot(kout, normal) / dot(kin_array, normal)
         jacobian[idx] *= complex(math.fabs((dot_kn + dot_hn + m_trans) / dot_kn))
 
         # ----------------------------------------
@@ -991,14 +991,14 @@ def get_bragg_reflection_sigma(reflectivity_sigma,
             denominator = alpha_tidle * numerator + sqrt_a2_b2 * (2. - numerator)
 
             # Assemble everything
-            reflectivity_sigma[idx] = b_complex * chih_sigma * numerator / denominator
+            reflectivity_sigma[idx] = b_complex * chih * numerator / denominator
         else:
             # When the crystal is super thick, the numerator becomes 1 The exponential term becomes 0.
             # Calculate some intermediate part
             denominator = alpha_tidle + sqrt_a2_b2
 
             # Assemble everything
-            reflectivity_sigma[idx] = b_complex * chih_sigma / denominator
+            reflectivity_sigma[idx] = b_complex * chih / denominator
         """
 
         # Get the phase term:
@@ -1104,7 +1104,7 @@ def get_bragg_reflection_sigma_phase(reflectivity_sigma,
         # Get the reflectivity
         reflectivity_sigma[idx] = complex(math.cos(tmp), -math.sin(tmp))
 
-        # Get the jacobian :   dot(kout, n) / dot(kin_array, n)
+        # Get the jacobian :   dot(kout, normal) / dot(kin_array, normal)
         jacobian[idx] *= complex(math.fabs((dot_kn + dot_hn + m_trans) / dot_kn))
 
 
@@ -1188,9 +1188,9 @@ def get_bragg_reflection_pi_polarization(reflectivity_pi,
         kout_grid[idx, 1] = kout_y
         kout_grid[idx, 2] = kout_z
 
-        # Get the jacobian :   dot(kout, n) / dot(kin_array, n)
+        # Get the jacobian :   dot(kout, normal) / dot(kin_array, normal)
         jacobian[idx] *= complex(math.fabs((dot_kn + dot_hn + m_trans) / dot_kn))
-        # jacobian[idx] *= complex(math.fabs(kout_x * n[0] + kout_y * n[1] + kout_z * n[2]) / dot_kn, 0)
+        # jacobian[idx] *= complex(math.fabs(kout_x * normal[0] + kout_y * normal[1] + kout_z * normal[2]) / dot_kn, 0)
 
         #####################################################################################################
         # Step 2: Get the reflectivity
@@ -1256,10 +1256,10 @@ def get_kin_and_jacobian(kin_grid, jacobian_grid,
     :param jacobian_grid:
     :param klen_grid: The wave vector length
     :param kout_grid:
-    :param h: The crystal h vector
+    :param h: The crystal BraggG vector
     :param n: The crystal normal direction
-    :param dot_hn: The inner product between h and n
-    :param h_square: The length of the h vector
+    :param dot_hn: The inner product between BraggG and normal
+    :param h_square: The length of the BraggG vector
     :param num:
     :return:
     """
@@ -1848,12 +1848,12 @@ def get_square_grating_effect_non_zero(kout_grid, efield_grid,
     if row < num:
         # Step 1: Calculate the effect of the grating on magnitude and phase for each component
 
-        # The argument for x(ik(n-1)h)
+        # The argument for x(ik(normal-1)BraggG)
         nhk = complex(grating_h[0] * kin_grid[row, 0] +
                       grating_h[1] * kin_grid[row, 1] +
                       grating_h[2] * kin_grid[row, 2]) * (grating_n - complex(1.))
 
-        # The argument for x(ik(n-1)t) for the phase different and absorption from
+        # The argument for x(ik(normal-1)t) for the phase different and absorption from
         # the base of the grating
         thick_k_n = complex(grating_base[0] * kin_grid[row, 0] +
                             grating_base[1] * kin_grid[row, 1] +
@@ -1928,12 +1928,12 @@ def get_square_grating_diffraction_scalar(kout_grid,
     if row < num:
         # Step 1: Calculate the effect of the grating on magnitude and phase for each component
 
-        # The argument for x(ik(n-1)h)
+        # The argument for x(ik(normal-1)BraggG)
         nhk = complex(grating_h[0] * kin_grid[row, 0] +
                       grating_h[1] * kin_grid[row, 1] +
                       grating_h[2] * kin_grid[row, 2]) * (grating_n - complex(1.))
 
-        # The argument for x(ik(n-1)t) for the phase different and absorption from
+        # The argument for x(ik(normal-1)t) for the phase different and absorption from
         # the base of the grating
         thick_k_n = complex(grating_base[0] * kin_grid[row, 0] +
                             grating_base[1] * kin_grid[row, 1] +
@@ -1987,7 +1987,7 @@ def get_perfect_mirror_scalar(kout_grid,
     :param klen_grid: The length of each incident wave vector. Notice that this value will update for the grating.
     :param kin_grid: The incident wave vector grid.
     :param mirror_n: The normal direction of the mirror pointing to the inner side of the mirror
-    :param mirror_n_dot_r: n \dot r. r is a point on the surface of the mirror.
+    :param mirror_n_dot_r: normal \dot r. r is a point on the surface of the mirror.
     :param num: The number of momenta to calculate.
     :return: None
     """
@@ -2044,7 +2044,7 @@ def get_square_grating_effect_zero(efield_grid,
     if row < num:
         # Step 1: Calculate the effect of the grating on magnitude and phase for each component
 
-        # The argument for x(ik(n-1)h)
+        # The argument for x(ik(normal-1)BraggG)
         nhk = complex(grating_h[0] * kin_grid[row, 0] +
                       grating_h[1] * kin_grid[row, 1] +
                       grating_h[2] * kin_grid[row, 2]) * (grating_n - complex(1.))
@@ -2301,7 +2301,7 @@ def get_1d_fresnel_diffraction(field_out,
             # Loop through the y source points
             integral = complex(0.)
             for y_source_idx in range(y_source_num):
-                # Get the phase angle
+                # Get the phase si111_angle
                 phase_angle = (y_source_array[y_source_idx] - y) ** 2
                 phase_angle *= k / 2. / z
 
@@ -2384,7 +2384,7 @@ def get_2d_fresnel_diffraction(field_out,
                 phase_angle_1 = (x_source_array[x_source_idx] - x) ** 2
 
                 for y_source_idx in range(y_source_num):
-                    # Get the phase angle from y direction
+                    # Get the phase si111_angle from y direction
                     phase_angle_2 = phase_angle_1 + (y_source_array[y_source_idx] - y) ** 2
                     phase_angle_2 *= kz_p2
 
@@ -2469,7 +2469,7 @@ def get_2d_fresnel_diffraction_v2(field_out,
                 phase_angle_1 = (x_source_array[x_source_idx] - x) ** 2
 
                 for y_source_idx in range(y_source_num):
-                    # Get the phase angle from y direction
+                    # Get the phase si111_angle from y direction
                     phase_angle_2 = phase_angle_1 + (y_source_array[y_source_idx] - y) ** 2
                     phase_angle_2 *= kz_p2
 

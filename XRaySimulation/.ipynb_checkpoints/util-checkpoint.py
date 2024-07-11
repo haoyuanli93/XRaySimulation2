@@ -116,11 +116,11 @@ def rot_mat_in_yz_plane(theta):
 def get_rotmat_around_axis(angleRadian, axis):
     """
     Get a rotation matrix that rotate a vector
-    with respect to an rotation_axis by some angle in radian.
+    with respect to an rotation_axis by some si111_angle in radian.
 
     According to the right hand rule,
     if one aligns the thumb with the positive direction of the rotation_axis,
-    then a positive angle is direction of your four fingers with
+    then a positive si111_angle is direction of your four fingers with
     a hollow fist.
 
     :param angleRadian:
@@ -163,7 +163,7 @@ def get_rotmat_around_axis(angleRadian, axis):
 # --------------------------------------------------------------
 def get_bragg_angle(wave_length, plane_distance):
     """
-    Return the estimated bragg angle according to the geometric Bragg law.
+    Return the estimated bragg si111_angle according to the geometric Bragg law.
     :param wave_length:
     :param plane_distance:
     :return:
@@ -178,7 +178,7 @@ def get_bragg_kout(kin, h, normal):
     :param kin: (3,) numpy array. The incident wave vector
     :param h: The reciprocal lattice of the crystal
     :param normal: The normal direction of the reflection surface.
-                    For a bragg reflection, n is pointing to the inside of the crystal.
+                    For a bragg reflection, normal is pointing to the inside of the crystal.
 
     :return: kout: (3,) numpy array. The diffraction wave vector.
     """
@@ -210,12 +210,12 @@ def get_bragg_kout_array(kin, crystal_h, normal):
     """
     This function produce the output wave vector from a Bragg reflection.
 
-    :param kin: (n, 3) numpy array. The incident wave vector
+    :param kin: (normal, 3) numpy array. The incident wave vector
     :param crystal_h: The reciprocal lattice of the crystal
     :param normal: The normal direction of the reflection surface.
-                    For a bragg reflection, n is pointing to the inside of the crystal.
+                    For a bragg reflection, normal is pointing to the inside of the crystal.
 
-    :return: kout: (n, 3) numpy array. The diffraction wave vector.
+    :return: kout: (normal, 3) numpy array. The diffraction wave vector.
     """
 
     # kout holder
@@ -241,12 +241,12 @@ def get_laue_kout_array(kin, crystal_h, normal):
     """
     This function produce the output wave vector from a laue reflection.
 
-    :param kin: (n, 3) numpy array. The incident wave vector
+    :param kin: (normal, 3) numpy array. The incident wave vector
     :param crystal_h: The reciprocal lattice of the crystal
     :param normal: The normal direction of the reflection surface.
-                    For a bragg reflection, n is pointing to the inside of the crystal.
+                    For a bragg reflection, normal is pointing to the inside of the crystal.
 
-    :return: kout: (n, 3) numpy array. The diffraction wave vector.
+    :return: kout: (normal, 3) numpy array. The diffraction wave vector.
     """
 
     # kout holder
@@ -352,14 +352,14 @@ def get_bragg_reflection_array(kin_grid, d, h, n,
     # mask[im <= 100] = True
 
     reflect_s = chih_sigma * b_cplx / denominator
-    # reflect_s[mask] = chih_sigma * b_cplx[mask] * numerator[mask] / denominator[mask]
+    # reflect_s[mask] = chih * b_cplx[mask] * numerator[mask] / denominator[mask]
 
     # ------------------------------------------------------------
     # Step 2: Get the reflectivity for pi polarization
     # ------------------------------------------------------------
 
     # Get the polarization factor with the asymmetric factor b.
-    p_value = complex(1.)  # np.sum(np.multiply(kout_grid, kin_grid), rotation_axis=-1) / np.square(klen_grid)
+    p_value = complex(1.)  # np.sum(np.multiply(kout_grid, k_vec), rotation_axis=-1) / np.square(klen_grid)
     bp = b_cplx * p_value
 
     # Get sqrt(alpha**2 + beta**2) value
@@ -518,14 +518,14 @@ def get_ROO_ROH_for_Bragg(kin_grid, d, h, n,
     # mask[im <= 100] = True
 
     reflect_s = chih_sigma * b_cplx / denominator
-    # reflect_s[mask] = chih_sigma * b_cplx[mask] * numerator[mask] / denominator[mask]
+    # reflect_s[mask] = chih * b_cplx[mask] * numerator[mask] / denominator[mask]
 
     # ------------------------------------------------------------
     # Step 2: Get the reflectivity for pi polarization
     # ------------------------------------------------------------
 
     # Get the polarization factor with the asymmetric factor b.
-    p_value = complex(1.)  # np.sum(np.multiply(kout_grid, kin_grid), rotation_axis=-1) / np.square(klen_grid)
+    p_value = complex(1.)  # np.sum(np.multiply(kout_grid, k_vec), rotation_axis=-1) / np.square(klen_grid)
     bp = b_cplx * p_value
 
     # Get sqrt(alpha**2 + beta**2) value
@@ -641,14 +641,14 @@ def get_R00_R0H_for_Laue(kin_grid, d, h, n,
     # mask[im <= 100] = True
 
     reflect_s = chih_sigma * b_cplx / denominator
-    # reflect_s[mask] = chih_sigma * b_cplx[mask] * numerator[mask] / denominator[mask]
+    # reflect_s[mask] = chih * b_cplx[mask] * numerator[mask] / denominator[mask]
 
     # ------------------------------------------------------------
     # Step 2: Get the reflectivity for pi polarization
     # ------------------------------------------------------------
 
     # Get the polarization factor with the asymmetric factor b.
-    p_value = complex(1.)  # np.sum(np.multiply(kout_grid, kin_grid), rotation_axis=-1) / np.square(klen_grid)
+    p_value = complex(1.)  # np.sum(np.multiply(kout_grid, k_vec), rotation_axis=-1) / np.square(klen_grid)
     bp = b_cplx * p_value
 
     # Get sqrt(alpha**2 + beta**2) value
@@ -686,7 +686,7 @@ def get_R00_R0H_for_Laue(kin_grid, d, h, n,
 def get_intersection(initial_position, k, normal, surface_point):
     """
     Assume that a line starts from point s along the direction k. It will intersect with
-    the plane that passes through point x0 and has normal direction n. The function find the
+    the plane that passes through point x0 and has normal direction normal. The function find the
     resulted intersection point.
 
     This function assumes that the arguments are arrays of points.
@@ -753,7 +753,7 @@ def get_grating_wavenumber_1d(direction, period, order):
 
 def get_grating_period(dtheta, klen_in):
     """
-    Derive the grating period based on the deviation angle and the incident wave number.
+    Derive the grating period based on the deviation si111_angle and the incident wave number.
     Here, one assume that the incident wave vector is perpendicular to the the grating surface.
 
     :param dtheta:
@@ -765,10 +765,10 @@ def get_grating_period(dtheta, klen_in):
 
 
 def get_square_grating_transmission(kin, height_vec, ab_ratio, base, refractive_index, order, grating_k):
-    # The argument for x(ik(n-1)h)
+    # The argument for x(ik(normal-1)BraggG)
     nhk = np.dot(height_vec, kin).astype(np.complex128) * (refractive_index - complex(1.))
 
-    # The argument for x(ik(n-1)t) for the phase different and absorption from
+    # The argument for x(ik(normal-1)t) for the phase different and absorption from
     # the base of the grating
     thick_k_n = np.dot(base, kin).astype(np.complex128) * (refractive_index - complex(1.))
 
@@ -792,10 +792,10 @@ def get_square_grating_transmission(kin, height_vec, ab_ratio, base, refractive_
 
 
 def get_square_grating_0th_transmission(kin, height_vec, refractive_index, ab_ratio, base):
-    # The argument for x(ik(n-1)h)
+    # The argument for x(ik(normal-1)BraggG)
     nhk = np.dot(height_vec, kin).astype(np.complex128) * (refractive_index - complex(1.))
 
-    # The argument for x(ik(n-1)t) for the phase different and absorption from
+    # The argument for x(ik(normal-1)t) for the phase different and absorption from
     # the base of the grating
     thick_k_n = np.dot(base, kin).astype(np.complex128) * (refractive_index - complex(1.))
 
@@ -882,7 +882,7 @@ def get_k_mesh_3d(number_x, number_y, number_z, delta_e_x, delta_e_y, delta_e_z)
 
 def get_k_mesh_1d(number, energy_range):
     """
-    Get a (n,3) numpy array as the wave vector array.
+    Get a (normal,3) numpy array as the wave vector array.
 
     Here, the output[:,2] contains non-zero values.
     I.e. I assume that the propagation direction is along z direction.

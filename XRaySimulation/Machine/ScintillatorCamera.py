@@ -67,7 +67,7 @@ class ScintillatorCamera:
                                                     normal=self.normal,
                                                     surface_point=self.surface_point)
 
-        # Calculate the circling angle
+        # Calculate the circling si111_angle
         difference = self.boundary - intersect_on_window[np.newaxis, :]
         difference /= np.linalg.norm(difference, axis=-1)[np.newaxis, 0]
         cross_vec = np.cross(difference[:-1], difference[1:])

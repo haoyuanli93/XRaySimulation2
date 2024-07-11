@@ -69,7 +69,7 @@ class saseSource:
 
         self.coor_dict = {'xCoor': xCoor, 'yCoor': yCoor, 'zCoor': zCoor, 'tCoor': tCoor,
                           'kxCoor': kxCoor, 'kyCoor': kyCoor, 'kzCoor': kzCoor,
-                          'ExCoor': ExCoor, 'EyCoor': EyCoor, 'kin_grid': EzCoor, }
+                          'ExCoor': ExCoor, 'EyCoor': EyCoor, 'k_vec': EzCoor, }
 
     def get_kin_grid(self):
         kinGrid = np.zeros((self.nx, self.ny, self.nz, 3))

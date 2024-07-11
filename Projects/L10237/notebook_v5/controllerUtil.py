@@ -17,24 +17,24 @@ I split it because it was too long.
 """
 si220 = {'thickness': 1.9201 * 1e-4,
          "chi0": complex(-0.10169E-04, 0.16106E-06),
-         "chih_sigma": complex(0.61786E-05, - 0.15508E-06),
-         "chihbar_sigma": complex(0.61786E-05, -0.15508E-06),
+         "chih": complex(0.61786E-05, - 0.15508E-06),
+         "chihbar": complex(0.61786E-05, -0.15508E-06),
          "chih_pi": complex(0.48374E-05, -0.11996E-06),
          "chihbar_pi": complex(0.48374E-05, -0.11996E-06),
          }
 
 si111 = {'thickness': 3.1355 * 1e-4,
          "chi0": complex(-0.10169E-04, 0.16106E-06),
-         "chih_sigma": complex(0.53693E-05, -0.11228E-06),
-         "chihbar_sigma": complex(0.53693E-05, -0.11228E-06),
+         "chih": complex(0.53693E-05, -0.11228E-06),
+         "chihbar": complex(0.53693E-05, -0.11228E-06),
          "chih_pi": complex(0.49322E-05, -0.10272E-06),
          "chihbar_pi": complex(0.49322E-05, -0.10272E-06),
          }
 
 dia111 = {'thickness': 2.0593 * 1e-4,
           "chi0": complex(-0.15217E-04, 0.13392E-07),
-          "chih_sigma": complex(0.55417E-05, -0.93083E-08),
-          "chihbar_sigma": complex(0.55417E-05, -0.93083E-08),
+          "chih": complex(0.55417E-05, -0.93083E-08),
+          "chihbar": complex(0.55417E-05, -0.93083E-08),
           "chih_pi": complex(0.44959E-05, - 0.74602E-08),
           "chihbar_pi": complex(0.44959E-05, -0.74602E-08),
           }
@@ -761,9 +761,9 @@ def get_diode(controller, spectrum_intensity, k_grid, gpu=False, force=False):
     # Step 1: check if the sase pulse is 1D
     if (len(spectrum_intensity.shape) == 1) and (not gpu):
         # Perform the 1D calculation
-        if np.max(np.abs(controller.crystal_efficiency['kin_grid'] - k_grid)) > 1e-6:
-            print("The maximal difference between the kin_grid of the SASE pulse "
-                  "and the kin_grid of the energy efficiency is larger than 1e-6.")
+        if np.max(np.abs(controller.crystal_efficiency['k_vec'] - k_grid)) > 1e-6:
+            print("The maximal difference between the k_vec of the SASE pulse "
+                  "and the k_vec of the energy efficiency is larger than 1e-6.")
             print("Do not do the calculation unless setting force=True to force the calcluation.")
             if force:
                 result = controller._get_diode(spectrum_intensity)
@@ -930,7 +930,7 @@ def get_beam_profile_on_yag_sample(rot_mat, kin, beam_size):
     # and 1 is normal to the yag surface
     kin_new = np.dot(rot_mat, kin)
 
-    # Get the incident angle with the wavevector and the YAG normal
+    # Get the incident si111_angle with the wavevector and the YAG normal
     angle = np.arcsin(kin_new[1] / np.linalg.norm((kin_new)))
 
     # mag factor
@@ -951,7 +951,7 @@ def get_beam_profile_on_yag_sample(rot_mat, kin, beam_size):
 
 
 def align_xpp_mono(controller):
-    # Get the geometry bragg angle
+    # Get the geometry bragg si111_angle
     bragg = util.get_bragg_angle(wave_length=np.pi * 2 / controller.gaussian_pulse.klen0, plane_distance=dia111['thickness'])
 
     # Step 1, move the mono1 th to the geometric path
@@ -1028,7 +1028,7 @@ def align_miniSD(controller):
                                                          final_plane_normal=np.array([0, 0, -1]))
     kout = kout[-1]
 
-    # Get the geometry bragg angle
+    # Get the geometry bragg si111_angle
     bragg = util.get_bragg_angle(wave_length=np.pi * 2 / controller.gaussian_pulse.klen0, plane_distance=si220['thickness'])
     bragg_list = [bragg, bragg, bragg, bragg, bragg, bragg]
 

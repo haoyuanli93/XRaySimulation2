@@ -10,7 +10,7 @@ def get_bragg_reflectivity_fix_crystal(kin, crystal):
     """
     Calculate the reflectivity with a fixed crystal.
     
-    :param kin: wave vector array.  Numpy array of shape (n, 3)
+    :param kin: wave vector array.  Numpy array of shape (normal, 3)
     :param crystal:
     :return:
     """
@@ -22,8 +22,8 @@ def get_bragg_reflectivity_fix_crystal(kin, crystal):
 
     # Extract the parameter
     chi0 = chi_dict["chi0"]
-    chih_sigma = chi_dict["chih_sigma"]
-    chihbar_sigma = chi_dict["chih_sigma"]
+    chih_sigma = chi_dict["chih"]
+    chihbar_sigma = chi_dict["chih"]
     chih_pi = chi_dict["chih_pi"]
     chihbar_pi = chi_dict["chih_pi"]
 
@@ -108,18 +108,18 @@ def get_bragg_reflectivity_per_entry(kin, thickness, crystal_h, normal, chi_dict
     """
     Calculate the reflectivity for each element. 
     
-    :param kin: wave vector array.  Numpy array of shape (n, 3)
+    :param kin: wave vector array.  Numpy array of shape (normal, 3)
     :param thickness: float
-    :param crystal_h: Numpy array of shape (n, 3)
-    :param normal: numpy array of shape (n, 3)
+    :param crystal_h: Numpy array of shape (normal, 3)
+    :param normal: numpy array of shape (normal, 3)
     :param chi_dict: The dictionary for parameters of electric susceptability.
     :return:
     """
 
     # Extract the parameter
     chi0 = chi_dict["chi0"]
-    chih_sigma = chi_dict["chih_sigma"]
-    chihbar_sigma = chi_dict["chih_sigma"]
+    chih_sigma = chi_dict["chih"]
+    chihbar_sigma = chi_dict["chih"]
     chih_pi = chi_dict["chih_pi"]
     chihbar_pi = chi_dict["chih_pi"]
 
@@ -227,7 +227,7 @@ def get_rocking_curve_around_axis(kin,
     h_array = np.zeros((scan_number, 3), dtype=np.float64)
     normal_array = np.zeros((scan_number, 3), dtype=np.float64)
 
-    # Get the scanning angle
+    # Get the scanning si111_angle
     angles = np.linspace(start=scan_range[0], stop=scan_range[1], num=scan_number)
 
     for idx in range(scan_number):
@@ -278,7 +278,7 @@ def get_rocking_curve_channelcut_around_axis(kin,
     h_array_2 = np.zeros((scan_number, 3), dtype=np.float64)
     normal_array_2 = np.zeros((scan_number, 3), dtype=np.float64)
 
-    # Get the scanning angle
+    # Get the scanning si111_angle
     angles = np.linspace(start=scan_range[0], stop=scan_range[1], num=scan_number)
 
     for idx in range(scan_number):
@@ -335,7 +335,7 @@ def get_rocking_curve_bandwidth_sum(kin_array,
     h_array_1 = np.zeros((scan_number, 3), dtype=np.float64)
     normal_array_1 = np.zeros((scan_number, 3), dtype=np.float64)
 
-    # Get the scanning angle
+    # Get the scanning si111_angle
     angles = np.linspace(start=scan_range[0], stop=scan_range[1], num=scan_number)
 
     for idx in range(scan_number):
@@ -345,7 +345,7 @@ def get_rocking_curve_bandwidth_sum(kin_array,
         normal_array_1[idx] = rot_mat.dot(crystal.normal)
 
     # -------------------------------------------------------------
-    #   Generate the 2D arrays for the kin and h for the scan
+    #   Generate the 2D arrays for the k_vec and BraggG for the scan
     # -------------------------------------------------------------
     h_array_1_2d = np.zeros((k_num, scan_number, 3))
     normal_array_1_2d = np.zeros((k_num, scan_number, 3))
@@ -386,7 +386,7 @@ def get_rocking_curve_channelcut_bandwidth_sum(kin_array,
                                                scan_range,
                                                scan_number, ):
     """
-    Calculate the rocking curve for a series of kin vectors
+    Calculate the rocking curve for a series of k_vec vectors
 
     :param kin_array:
     :param crystal
@@ -404,7 +404,7 @@ def get_rocking_curve_channelcut_bandwidth_sum(kin_array,
     h_array_2 = np.zeros((scan_number, 3), dtype=np.float64)
     normal_array_2 = np.zeros((scan_number, 3), dtype=np.float64)
 
-    # Get the scanning angle
+    # Get the scanning si111_angle
     angles = np.linspace(start=scan_range[0], stop=scan_range[1], num=scan_number)
 
     for idx in range(scan_number):
@@ -417,7 +417,7 @@ def get_rocking_curve_channelcut_bandwidth_sum(kin_array,
         normal_array_2[idx] = rot_mat.dot(crystal.crystal_list[1].normal)
 
     # -------------------------------------------------------------
-    #   Generate the 2D arrays for the kin and h for the scan
+    #   Generate the 2D arrays for the k_vec and BraggG for the scan
     # -------------------------------------------------------------
     h_array_1_2d = np.zeros((k_num, scan_number, 3))
     h_array_2_2d = np.zeros((k_num, scan_number, 3))
