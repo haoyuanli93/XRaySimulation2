@@ -814,6 +814,7 @@ def get_crystal_param(crystal_type, miller_index, energy_kev):
                       + r'&detail={}'.format(detail))
 
     data = requests.get(commandline).text
+    print(data)
 
     #############################################################
     #   Parse the parameters
