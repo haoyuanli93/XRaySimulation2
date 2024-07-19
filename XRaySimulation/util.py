@@ -156,7 +156,7 @@ def get_rotmat_around_axis(angleRadian, axis):
     new_axis = np.zeros(3, dtype=np.float64)
     new_axis[0] = 1.0
 
-    if np.linalg.norm(np.cross(new_axis, axis)) <= 1e-8:
+    if (np.linalg.norm(np.cross(new_axis, axis)) <= 1e-8):
         # If this relative is valid, then rotation_axis[0] ~ 1 while  rotation_axis[1] = rotation_axis[2] = 0
         new_axis[0] = 0.0
         new_axis[1] = 1.0
@@ -174,7 +174,8 @@ def get_rotmat_around_axis(angleRadian, axis):
 
     # Construct the matrix
     rotMat = np.zeros((3, 3))
-    rotMat += np.outer(axis, axis) + np.cos(angleRadian) * (np.outer(new_axis, new_axis) + np.outer(new_axis2, new_axis2))
+    rotMat += np.outer(axis, axis) + np.cos(angleRadian) * (
+            np.outer(new_axis, new_axis) + np.outer(new_axis2, new_axis2))
     rotMat += np.sin(angleRadian) * (np.outer(new_axis2, new_axis) - np.outer(new_axis, new_axis2))
 
     return rotMat
@@ -1367,3 +1368,90 @@ def show_stats_1d(stats_holder, coor, fig_height, fig_width):
     axes[2, 1].set_title("Z Projection")
 
     plt.show()
+
+
+# -----------------------------------------------------------------------
+#  Get diffraction from acoustic phonons
+# -----------------------------------------------------------------------
+def get_bragg_reflectivity_with_phonon(kVec,
+                                       thickness,
+                                       BraggG,
+                                       normal,
+                                       phononQ,
+                                       omega,
+                                       polar,
+                                       chi0,
+                                       chih,
+                                       chihbar):
+    # ---------------------------------------------------
+    # Get the output wave-vector
+    # ---------------------------------------------------
+    klen_grid = np.linalg.norm(kVec, axis=-1)
+
+    # Define commonly used geometric quantities for the calculation
+    gamma_0 = np.sum(np.multiply(kVec, normal), axis=-1) / klen_grid
+    gamma_h = np.sum(np.multiply(kVec + BraggG, normal), axis=-1) / klen_grid
+    b = gamma_0 / gamma_h
+
+    alpha = (2 * np.sum(np.multiply(kVec, BraggG), axis=-1) + np.sum(np.square(BraggG), axis=-1)) / np.square(klen_grid)
+
+    # Get surface momentrum transfer momentum tranfer
+    m_trans = np.multiply(klen_grid, -gamma_h - np.sqrt(gamma_h ** 2 - alpha))
+
+    # Update the kout_grid
+    kout = kVec + BraggG + np.multiply(m_trans[:, np.newaxis], normal)
+
+    # -----------------------------------------------------
+    # Perfect crystal
+    # ------------------------------------------------------
+    y = 0.5 / np.sqrt(np.abs(b).astype(np.complex128) * chih * chihbar)
+    y *= b * alpha + chi0 * (1 - b)
+    y1 = -y + np.sqrt(y ** 2 - 1)
+    y2 = -y - np.sqrt(y ** 2 - 1)
+
+    scriptG = np.sqrt(np.abs(b) * chih * chihbar) / chihbar
+    scriptA = klen_grid * thickness * np.sqrt(chihbar * chih / gamma_0 / np.abs(gamma_h))
+
+    eta_d_1 = chi0 * klen_grid * thickness / 2. / gamma_0 + scriptA / 2. * y1
+    eta_d_2 = chi0 * klen_grid * thickness / 2. / gamma_0 + scriptA / 2. * y2
+
+    # Create a mask that switch the 1 and 2
+    mask = eta_d_1.imag < 0  # if eta_d_1.imag < 0, then (1.j * eta_d_1).real > 0 which means the exp() explodes
+    tmp_eta_d = np.copy(eta_d_1)
+    tmp_y = np.copy(y1)
+
+    y1[mask] = y2[mask]
+    y2[mask] = tmp_y[mask]
+    eta_d_1[mask] = eta_d_2[mask]
+    eta_d_2[mask] = tmp_eta_d[mask]
+
+    capR1 = scriptG * y1
+    capR2 = scriptG * y2
+
+    phase_term = np.exp(1.j * (eta_d_1 - eta_d_2))
+    R0H = capR1 * capR2 * (1 - phase_term)
+    R0H /= (capR2 - capR1 * phase_term)
+
+    R00 = (capR2 - capR1) / (capR2 - capR1 * phase_term)
+    R00 *= np.exp(1.j * eta_d_1)
+
+    # -----------------------------------------------------
+    # phonon contribution
+    # ------------------------------------------------------
+    delta_chih = 1.j * chih * np.sum(np.multiply(BraggG, polar), axis=-1)
+    delta_chihbar = 1.j * chihbar * np.sum(np.multiply(BraggG, polar), axis=-1)
+    beta_h = alpha - chi0 / 2.
+
+    capA0 = 2. / klen_grid * np.sum(np.multiply(kVec / klen_grid[:, np.newaxis], phononQ), axis=-1)
+    capA0 -= 2 * omega / c / klen_grid
+
+    capAh = 2. / klen_grid * np.sum(np.multiply((kVec + BraggG) / klen_grid[:, np.newaxis], phononQ), axis=-1)
+    capAh -= 2 * omega / c / klen_grid
+
+    d_plus = 0.5 * (chih * delta_chihbar * R0H + capA0 * delta_chih * R00)
+    d_plus /= (capA0 * (capAh + 2 * beta_h) - chih * chihbar)
+
+    d_minus = 0.5 * (chih * delta_chihbar * R0H - capA0 * delta_chih * R00)
+    d_minus /= (-capA0 * (-capAh + 2 * beta_h) - chih * chihbar)
+
+    return R0H, R00, b, d_plus, d_minus, kout, delta_chih
