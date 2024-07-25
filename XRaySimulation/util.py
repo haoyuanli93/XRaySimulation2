@@ -1280,7 +1280,7 @@ def get_gaussian_fit(curve, coordinate):
     gaussian_fit /= np.sum(gaussian_fit)
 
     gaussian_fit *= total
-    return gaussian_fit
+    return gaussian_fit, std
 
 
 ############################################################
