@@ -49,9 +49,10 @@ def get_raytracing_trajectory(controller, path="mono", get_path_length='True', v
                                                                                kin=controller.gaussian_pulse.k0,
                                                                                initial_point=controller.gaussian_pulse.x0,
                                                                                final_plane_point=
-                                                                np.copy(controller.sample.yag1.surface_point),
+                                                                               np.copy(
+                                                                                   controller.sample.yag1.surface_point),
                                                                                final_plane_normal=
-                                                                np.copy(controller.sample.yag1.normal))
+                                                                               np.copy(controller.sample.yag1.normal))
 
     elif path == "cc sample":
         defice_list = ([controller.mono_t1.optics, controller.mono_t2.optics, controller.g1.grating_m1]
@@ -64,7 +65,8 @@ def get_raytracing_trajectory(controller, path="mono", get_path_length='True', v
                                                                                kin=controller.gaussian_pulse.k0,
                                                                                initial_point=controller.gaussian_pulse.x0,
                                                                                final_plane_point=
-                                                                np.copy(controller.sample.sample.surface_point),
+                                                                               np.copy(
+                                                                                   controller.sample.sample.surface_point),
                                                                                final_plane_normal=virtual_sample_plane)
 
     elif path == "vcc":
@@ -77,9 +79,10 @@ def get_raytracing_trajectory(controller, path="mono", get_path_length='True', v
                                                                                kin=controller.gaussian_pulse.k0,
                                                                                initial_point=controller.gaussian_pulse.x0,
                                                                                final_plane_point=
-                                                                np.copy(controller.sample.yag1.surface_point),
+                                                                               np.copy(
+                                                                                   controller.sample.yag1.surface_point),
                                                                                final_plane_normal=
-                                                                np.copy(controller.sample.yag1.normal))
+                                                                               np.copy(controller.sample.yag1.normal))
     elif path == "probe m1 only":
         defice_list = ([controller.mono_t1.optics, controller.mono_t2.optics, controller.g1.grating_1]
                        + controller.t2.optics.crystal_list + controller.t3.optics.crystal_list
@@ -90,9 +93,10 @@ def get_raytracing_trajectory(controller, path="mono", get_path_length='True', v
                                                                                kin=controller.gaussian_pulse.k0,
                                                                                initial_point=controller.gaussian_pulse.x0,
                                                                                final_plane_point=
-                                                                np.copy(controller.sample.yag1.surface_point),
+                                                                               np.copy(
+                                                                                   controller.sample.yag1.surface_point),
                                                                                final_plane_normal=
-                                                                np.copy(controller.sample.yag1.normal))
+                                                                               np.copy(controller.sample.yag1.normal))
     elif path == "probe":
         defice_list = ([controller.mono_t1.optics, controller.mono_t2.optics, controller.g1.grating_1]
                        + controller.t2.optics.crystal_list + controller.t3.optics.crystal_list
@@ -103,9 +107,10 @@ def get_raytracing_trajectory(controller, path="mono", get_path_length='True', v
                                                                                kin=controller.gaussian_pulse.k0,
                                                                                initial_point=controller.gaussian_pulse.x0,
                                                                                final_plane_point=
-                                                                np.copy(controller.sample.yag1.surface_point),
+                                                                               np.copy(
+                                                                                   controller.sample.yag1.surface_point),
                                                                                final_plane_normal=
-                                                                np.copy(controller.sample.yag1.normal))
+                                                                               np.copy(controller.sample.yag1.normal))
 
     elif path == "pump a":
         defice_list = ([controller.mono_t1.optics, controller.mono_t2.optics, controller.g1.grating_m1]
@@ -115,9 +120,9 @@ def get_raytracing_trajectory(controller, path="mono", get_path_length='True', v
                                                                                kin=controller.gaussian_pulse.k0,
                                                                                initial_point=controller.gaussian_pulse.x0,
                                                                                final_plane_point=np.copy(
-                                                                    controller.sample.yag1.surface_point),
+                                                                                   controller.sample.yag1.surface_point),
                                                                                final_plane_normal=np.copy(
-                                                                    controller.sample.yag1.normal))
+                                                                                   controller.sample.yag1.normal))
 
     elif path == "pump a no mirror":
         defice_list = ([controller.mono_t1.optics, controller.mono_t2.optics, controller.g1.grating_m1]
@@ -127,9 +132,9 @@ def get_raytracing_trajectory(controller, path="mono", get_path_length='True', v
                                                                                kin=controller.gaussian_pulse.k0,
                                                                                initial_point=controller.gaussian_pulse.x0,
                                                                                final_plane_point=np.copy(
-                                                                    controller.sample.yag1.surface_point),
+                                                                                   controller.sample.yag1.surface_point),
                                                                                final_plane_normal=np.copy(
-                                                                    controller.sample.yag1.normal))
+                                                                                   controller.sample.yag1.normal))
 
     elif path == "pump b":
         defice_list = ([controller.mono_t1.optics, controller.mono_t2.optics, controller.g1.grating_m1]
@@ -139,9 +144,9 @@ def get_raytracing_trajectory(controller, path="mono", get_path_length='True', v
                                                                                kin=controller.gaussian_pulse.k0,
                                                                                initial_point=controller.gaussian_pulse.x0,
                                                                                final_plane_point=np.copy(
-                                                                    controller.sample.yag1.surface_point),
+                                                                                   controller.sample.yag1.surface_point),
                                                                                final_plane_normal=np.copy(
-                                                                    controller.sample.yag1.normal))
+                                                                                   controller.sample.yag1.normal))
 
     elif path == "pump b no mirror":
         defice_list = ([controller.mono_t1.optics, controller.mono_t2.optics, controller.g1.grating_m1]
@@ -151,9 +156,9 @@ def get_raytracing_trajectory(controller, path="mono", get_path_length='True', v
                                                                                kin=controller.gaussian_pulse.k0,
                                                                                initial_point=controller.gaussian_pulse.x0,
                                                                                final_plane_point=np.copy(
-                                                                    controller.sample.yag1.surface_point),
+                                                                                   controller.sample.yag1.surface_point),
                                                                                final_plane_normal=np.copy(
-                                                                    controller.sample.yag1.normal))
+                                                                                   controller.sample.yag1.normal))
 
     elif path == "mono":
         defice_list = [controller.mono_t1.optics, controller.mono_t2.optics]
@@ -175,7 +180,8 @@ def get_raytracing_trajectory(controller, path="mono", get_path_length='True', v
                                                                                kin=controller.gaussian_pulse.k0,
                                                                                initial_point=controller.gaussian_pulse.x0,
                                                                                final_plane_point=
-                                                                np.copy(controller.sample.sample.surface_point),
+                                                                               np.copy(
+                                                                                   controller.sample.sample.surface_point),
                                                                                final_plane_normal=virtual_sample_plane)
 
     elif path == "pump a sample":
@@ -189,7 +195,8 @@ def get_raytracing_trajectory(controller, path="mono", get_path_length='True', v
                                                                                kin=controller.gaussian_pulse.k0,
                                                                                initial_point=controller.gaussian_pulse.x0,
                                                                                final_plane_point=
-                                                                np.copy(controller.sample.sample.surface_point),
+                                                                               np.copy(
+                                                                                   controller.sample.sample.surface_point),
                                                                                final_plane_normal=virtual_sample_plane)
 
     elif path == "pump b sample":
@@ -203,7 +210,8 @@ def get_raytracing_trajectory(controller, path="mono", get_path_length='True', v
                                                                                kin=controller.gaussian_pulse.k0,
                                                                                initial_point=controller.gaussian_pulse.x0,
                                                                                final_plane_point=
-                                                                np.copy(controller.sample.sample.surface_point),
+                                                                               np.copy(
+                                                                                   controller.sample.sample.surface_point),
                                                                                final_plane_normal=virtual_sample_plane)
 
     else:
@@ -280,13 +288,15 @@ def plot_mono_optics(controller, ax, show_trajectory=False):
     ax.set_ylim([- 600, 100])
 
 
-def plot_miniSD_table(controller, ax, xlim=None, ylim=None, show_trajectory=False):
+def plot_miniSD_table(controller, ax, xlim=None, ylim=None, show_trajectory=False, show_device=True):
     if xlim is None:
         xlim = [-100, 1200]
     if ylim is None:
         ylim = [-100, 100]
 
-    controller.plot_motors(ax=ax, color='black')
+    if show_device:
+        controller.plot_motors(ax=ax, color='black')
+
     controller.plot_optics(ax=ax, color='blue')
 
     ax.set_aspect('equal')
@@ -467,7 +477,7 @@ def plot_m1_traj(controller, ax, axis='yz', xlim=None, ylim=None):
     ax.set_xlabel("{} rotation_axis (mm)".format(axis[1]))
     ax.set_ylabel("{} rotation_axis (mm)".format(axis[0]))
     ax.set_title('Mirror 1')
-    ax.legend()
+    #ax.legend()
 
 
 def plot_si_traj(controller, ax, axis='yz', xlim=None, ylim=None):
@@ -521,7 +531,7 @@ def plot_si_traj(controller, ax, axis='yz', xlim=None, ylim=None):
     ax.set_xlabel("{} rotation_axis (mm)".format(axis[1]))
     ax.set_ylabel("{} rotation_axis (mm)".format(axis[0]))
     ax.set_title('silicon')
-    ax.legend(loc=(1, 0))
+    #ax.legend(loc=(1, 0))
 
 
 def plot_tg_traj(controller, ax, axis='yz', xlim=None, ylim=None):
@@ -589,7 +599,7 @@ def plot_tg_traj(controller, ax, axis='yz', xlim=None, ylim=None):
     ax.set_xlabel("{} rotation_axis (mm)".format(axis[1]))
     ax.set_ylabel("{} rotation_axis (mm)".format(axis[0]))
     ax.set_title('Sample')
-    ax.legend(loc=(1, 0))
+    #ax.legend(loc=(1, 0))
 
 
 def get_beam_position_on_yag(controller):
@@ -639,6 +649,7 @@ def get_sample_path_length(controller):
             'pump a': pump_a_path,
             'pump b': pump_b_path,
             }
+
 
 def get_sample_kout(controller):
     probe_sample_traj, probe_kout, probe_path = controller.get_raytracing_trajectory(path="probe sample")
@@ -952,7 +963,8 @@ def get_beam_profile_on_yag_sample(rot_mat, kin, beam_size):
 
 def align_xpp_mono(controller):
     # Get the geometry bragg si111_angle
-    bragg = util.get_bragg_angle(wave_length=np.pi * 2 / controller.gaussian_pulse.klen0, plane_distance=dia111['thickness'])
+    bragg = util.get_bragg_angle(wave_length=np.pi * 2 / controller.gaussian_pulse.klen0,
+                                 plane_distance=dia111['thickness'])
 
     # Step 1, move the mono1 th to the geometric path
     _ = controller.mono_t1.th_umv(target=-bragg)
@@ -962,13 +974,10 @@ def align_xpp_mono(controller):
     (angles1, reflect_sigma1,
      reflect_pi1, b_factor1, kout1) = XRaySimulation.RockingCurve.get_rocking_curve_around_axis(
         kin=controller.gaussian_pulse.k0,
-        scan_range=np.deg2rad(0.2),
+        scan_range=np.array([-np.deg2rad(0.1), np.deg2rad(0.1)]),
         scan_number=10 ** 3,
         rotation_axis=controller.mono_t1.th.rotation_axis,
-        h_initial=controller.mono_t1.optics.h,
-        normal_initial=controller.mono_t1.optics.normal,
-        thickness=controller.mono_t1.optics.thickness,
-        chi_dict=controller.mono_t1.optics.chi_dict, )
+        crystal=controller.mono_t1.optics, )
 
     # Get the target bragg peak
     fwhm, angle_adjust, index = util.get_fwhm(coordinate=angles1,
@@ -985,13 +994,10 @@ def align_xpp_mono(controller):
     (angles2, reflect_sigma2,
      reflect_pi2, b_factor2, kout2) = XRaySimulation.RockingCurve.get_rocking_curve_around_axis(
         kin=kin1,
-        scan_range=np.deg2rad(0.2),
+        scan_range=np.array([-np.deg2rad(0.1), np.deg2rad(0.1)]),
         scan_number=10 ** 3,
         rotation_axis=controller.mono_t2.th.rotation_axis,
-        h_initial=controller.mono_t2.optics.h,
-        normal_initial=controller.mono_t2.optics.normal,
-        thickness=controller.mono_t2.optics.thickness,
-        chi_dict=controller.mono_t2.optics.chi_dict, )
+        crystal=controller.mono_t2.optics, )
 
     # Get the target bragg peak
     fwhm2, angle_adjust2, index2 = util.get_fwhm(coordinate=angles2,
@@ -1021,15 +1027,17 @@ def align_xpp_mono(controller):
 
 def align_miniSD(controller):
     # Get the kout after the XPP mono
-    _, kout, _ = XRaySimulation.RayTracing.get_lightpath(device_list=[controller.mono_t1.optics, controller.mono_t2.optics],
-                                                         kin=controller.gaussian_pulse.k0,
-                                                         initial_point=controller.gaussian_pulse.x0,
-                                                         final_plane_point=np.array([0, 0, 10e6]),
-                                                         final_plane_normal=np.array([0, 0, -1]))
+    _, kout, _ = XRaySimulation.RayTracing.get_lightpath(
+        device_list=[controller.mono_t1.optics, controller.mono_t2.optics],
+        kin=controller.gaussian_pulse.k0,
+        initial_point=controller.gaussian_pulse.x0,
+        final_plane_point=np.array([0, 0, 10e6]),
+        final_plane_normal=np.array([0, 0, -1]))
     kout = kout[-1]
 
     # Get the geometry bragg si111_angle
-    bragg = util.get_bragg_angle(wave_length=np.pi * 2 / controller.gaussian_pulse.klen0, plane_distance=si220['thickness'])
+    bragg = util.get_bragg_angle(wave_length=np.pi * 2 / controller.gaussian_pulse.klen0,
+                                 plane_distance=si220['thickness'])
     bragg_list = [bragg, bragg, bragg, bragg, bragg, bragg]
 
     # Step 1, move the mono1 th to the geometric path
@@ -1049,7 +1057,7 @@ def align_miniSD(controller):
         (angles1, reflect_sigma1,
          reflect_pi1, b_factor1, kout1) = XRaySimulation.RockingCurve.get_rocking_curve_channelcut_around_axis(
             kin=kin,
-            scan_range=np.deg2rad(0.2),
+            scan_range=np.array([-np.deg2rad(0.1), np.deg2rad(0.1)]),
             scan_number=10 ** 3,
             rotation_axis=tower[0].th.rotation_axis,
             channelcut=tower[0].optics, )
@@ -1076,7 +1084,7 @@ def align_miniSD(controller):
         (angles1, reflect_sigma1,
          reflect_pi1, b_factor1, kout1) = XRaySimulation.RockingCurve.get_rocking_curve_channelcut_around_axis(
             kin=kin,
-            scan_range=np.deg2rad(0.2),
+            scan_range=np.array([-np.deg2rad(0.1), np.deg2rad(0.1)]),
             scan_number=10 ** 3,
             rotation_axis=tower[0].th.rotation_axis,
             channelcut=tower[0].optics, )
@@ -1103,7 +1111,7 @@ def align_miniSD(controller):
         (angles1, reflect_sigma1,
          reflect_pi1, b_factor1, kout1) = XRaySimulation.RockingCurve.get_rocking_curve_channelcut_around_axis(
             kin=kin,
-            scan_range=np.deg2rad(0.2),
+            scan_range=np.array([-np.deg2rad(0.1), np.deg2rad(0.1)]),
             scan_number=10 ** 3,
             rotation_axis=tower[0].rotation_axis,
             channelcut=tower[1])
@@ -1123,11 +1131,12 @@ def align_miniSD(controller):
 
 def get_miniSD_rocking(controller):
     # Get the kout after the XPP mono
-    _, kout, _ = XRaySimulation.RayTracing.get_lightpath(device_list=[controller.mono_t1.optics, controller.mono_t2.optics],
-                                                         kin=controller.gaussian_pulse.k0,
-                                                         initial_point=controller.gaussian_pulse.x0,
-                                                         final_plane_point=np.array([0, 0, 10e6]),
-                                                         final_plane_normal=np.array([0, 0, -1]))
+    _, kout, _ = XRaySimulation.RayTracing.get_lightpath(
+        device_list=[controller.mono_t1.optics, controller.mono_t2.optics],
+        kin=controller.gaussian_pulse.k0,
+        initial_point=controller.gaussian_pulse.x0,
+        final_plane_point=np.array([0, 0, 10e6]),
+        final_plane_normal=np.array([0, 0, -1]))
     kout = kout[-1]
 
     # Fine adjustment according to dynamical diffraction theory
@@ -1138,7 +1147,9 @@ def get_miniSD_rocking(controller):
         # Step 2, get the rocking curve around the motion rotation_axis for the two crystals.
         (angles1, reflect_sigma1, reflect_pi1, b_factor1, kout1
          ) = XRaySimulation.RockingCurve.get_rocking_curve_channelcut_around_axis(
-            kin=kin, scan_range=np.deg2rad(0.2), scan_number=10 ** 3,
+            kin=kin,
+            scan_range=np.array([-np.deg2rad(0.1), np.deg2rad(0.1)]),
+            scan_number=10 ** 3,
             rotation_axis=tower[0].th.rotation_axis, channelcut=tower[0].optics, )
 
         # Get the target bragg peak
@@ -1160,7 +1171,7 @@ def get_miniSD_rocking(controller):
         (angles1, reflect_sigma1,
          reflect_pi1, b_factor1, kout1) = XRaySimulation.RockingCurve.get_rocking_curve_channelcut_around_axis(
             kin=kin,
-            scan_range=np.deg2rad(0.2),
+            scan_range=np.array([-np.deg2rad(0.1), np.deg2rad(0.1)]),
             scan_number=10 ** 3,
             rotation_axis=tower[0].th.rotation_axis,
             channelcut=tower[0].optics, )
@@ -1184,7 +1195,7 @@ def get_miniSD_rocking(controller):
         (angles1, reflect_sigma1,
          reflect_pi1, b_factor1, kout1) = XRaySimulation.RockingCurve.get_rocking_curve_channelcut_around_axis(
             kin=kin,
-            scan_range=np.deg2rad(0.2),
+            scan_range=np.array([-np.deg2rad(0.1), np.deg2rad(0.1)]),
             scan_number=10 ** 3,
             rotation_axis=tower[0].rotation_axis,
             channelcut=tower[1])

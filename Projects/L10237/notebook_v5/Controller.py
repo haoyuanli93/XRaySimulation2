@@ -91,7 +91,7 @@ class XppController_TG:
 
         self.all_towers = [self.mono_t1, self.mono_t2,
                            self.t1, self.t2, self.t3, self.t45, self.t6,
-                           self.g1, self.g2, self.tg_g,
+                           self.g1, self.tg_g,
                            self.m1, self.m2a, self.m2b, self.si, self.sample, ]
         # Install the crystal towers on the breadboard
         self.breadboard1 = Motors.Breadboard(hole_num_x=23, hole_num_z=55, gauge='metric')
@@ -177,8 +177,10 @@ class XppController_TG:
     def plot_mono_optics(self, ax, show_trajectory=False):
         controllerUtil.plot_mono_optics(controller=self, ax=ax, show_trajectory=show_trajectory)
 
-    def plot_miniSD_table(self, ax, xlim=None, ylim=None, show_trajectory=False):
-        controllerUtil.plot_miniSD_table(controller=self, ax=ax, xlim=xlim, ylim=ylim, show_trajectory=show_trajectory)
+    def plot_miniSD_table(self, ax, xlim=None, ylim=None, show_trajectory=False, show_device=True):
+        controllerUtil.plot_miniSD_table(controller=self, ax=ax, xlim=xlim, ylim=ylim,
+                                         show_trajectory=show_trajectory,
+                                         show_device=show_device)
 
     def plot_miniSD_rocking(self, ax_list):
         controllerUtil.plot_miniSD_rocking(controller=self, ax_list=ax_list)
