@@ -319,7 +319,7 @@ def getGaussianModeSum(nx=128, ny=128, nz=1024,
     :param modeCenterSpreadX:   The FWHM if the spread of the cetner of the mode along X rotation_axis
     :param modeCenterSpreadY:   The FWHM if the spread of the cetner of the mode along y rotation_axis
     :param modeCenterSpreadZ:   The FWHM if the spread of the cetner of the mode along z rotation_axis
-    :param k0:     Center wave-vector = 12.4 / E_keV * 1e4   (i.e. angular wave-number of the carrier frequency in um^-1)
+    :param k0:     Center wave-vector = 12.4 / energy_kev * 1e4   (i.e. angular wave-number of the carrier frequency in um^-1)
     :param randomSeed:  Random seed.
     :return:
     """
